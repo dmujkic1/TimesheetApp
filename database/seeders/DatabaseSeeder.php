@@ -20,11 +20,12 @@ class DatabaseSeeder extends Seeder
     {
       
         $this->call([
-            UserSeeder::class,
+            AdminSeeder::class,
             RolesAndPermissionsSeeder::class,
+            UserSeeder::class,
         ]);
-        Employee::factory(10)->active()->create();
-        Manager::factory(5)->active()->create();
+        //Employee::factory(10)->active()->create();
+        //Manager::factory(5)->active()->create();
       /*   Manager::factory()->count(5)->create();
         Employee::factory()->count(10)->create(); */
 

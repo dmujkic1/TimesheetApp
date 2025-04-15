@@ -41,10 +41,12 @@ class RolesAndPermissionsSeeder extends Seeder
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo(Permission::all());
 
-        $svi = User::all();
+        /* $svi = User::all();
         foreach ($svi as $user) { $user->assignRole('user'); } //observer odraditi ovo - dugorocno
         User::where("email", "dinom@gmail.com")->first()->assignRole('admin'); //od ovog poceti i onda u nekom Controlleru napraviti CRUD da admin moze role davati ljudima
-        User::where("email", "danim@gmail.com")->first()->assignRole('user');
+        User::where("email", "danim@gmail.com")->first()->assignRole('user'); */
+        
+        User::where("email", "dinom@gmail.com")->first()->assignRole('admin');
         
     }
 }

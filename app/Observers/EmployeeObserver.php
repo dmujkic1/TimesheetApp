@@ -16,7 +16,7 @@ class EmployeeObserver
 
     public function afterCreated(Employee $employee): void
     {
-        if (!$employee->hasRole('employee')) { $employee->assignRole('employee'); }
+        //
     }
 
     /**

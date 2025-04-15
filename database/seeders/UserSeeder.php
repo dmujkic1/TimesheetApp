@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -15,17 +13,29 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        //User::factory(15)->create();
-        //User::create(['dmujkic1', 'dmujkic1@etf.unsa.ba', '2025-04-09 15:57:54', 'mojaSifra']);
-        User::create([
-            "name" => "Dino Mujkić",
-            "email" => "dinom@gmail.com",
-            "password" => Hash::make("mojaSifra")
-        ]);
-        User::create([
-            "name" => "Dani Mujkić",
-            "email" => "danim@gmail.com",
-            "password" => Hash::make("mojaSifraa")
-        ]);
+        User::factory(15)->create();
+        $useri = User::all();
+        $titule = ['Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.'];
+        foreach ($useri as $user) {
+            $fullName = $user->name;
+            $nameParts = explode(' ', $fullName);
+
+            if (in_array($nameParts[0], $titule)) {
+                array_shift($nameParts); // uklanja titulu iz first_name varijable
+            }
+
+            $firstName = $nameParts[0] ?? '';
+            $lastName = implode(' ', array_slice($nameParts, 1));
+
+            $user->employee()->create([
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email' => $user->email,
+                'job_title' => 'Receptionist',
+                'hire_date' => now(),
+                'status' => true,
+                'assigned_role' => 'test role',
+            ]);
+        }
     }
 }
