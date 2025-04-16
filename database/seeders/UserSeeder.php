@@ -34,7 +34,6 @@ class UserSeeder extends Seeder
                 'job_title' => 'Receptionist',
                 'hire_date' => now(),
                 'status' => true,
-                'assigned_role' => 'test role',
             ]);
         }
     }

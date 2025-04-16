@@ -21,7 +21,6 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             //$table->foreignId('manager_id')->nullable()->constrained();
             //$table->foreign('manager_id')->references('id')->on('employees')->onDelete('set null');
-            $table->string('assigned_role')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
             $table->softDeletes();

@@ -26,9 +26,6 @@ class ManagerFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => true,
-        ])
-        ->afterCreating(function (Manager $employee) {
-            $employee->assignRole('manager');
-        });
+        ]);
     }
 }

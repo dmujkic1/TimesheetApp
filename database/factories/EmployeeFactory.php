@@ -24,7 +24,6 @@ class EmployeeFactory extends Factory
         'job_title' => $this->faker->jobTitle(),
         'hire_date' => $this->faker->dateTime(),
         'status' => $this->faker->boolean(),
-        'assigned_role' => $this->faker->word(),
         'user_id' => 1,
         ];
     }
@@ -33,9 +32,6 @@ class EmployeeFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => true,
-        ])
-        ->afterCreating(function (Employee $employee) {
-            $employee->assignRole('employee');
-        });
+        ]);
     }
 }

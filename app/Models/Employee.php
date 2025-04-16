@@ -11,7 +11,22 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Model
 {
-    use HasFactory, Notifiable, hasRoles, SoftDeletes;
+    use HasFactory, SoftDeletes;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'job_title',
+        'hire_date',
+        'status',
+        'user_id',
+    ];
 
     public function user(): BelongsTo
     {
