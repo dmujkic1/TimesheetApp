@@ -16,6 +16,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $this->authorize('view-employees');
+        //$employees = Employee::paginate(10);
         return Inertia::render('web/employees/Index', [ //Employee::select('id')->get(),
             'employees' => Employee::all(),
         ]);
@@ -76,16 +77,19 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, Employee $employeeId)
     {
         $this->authorize('update-employee');
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => 'nullable|string|min:8|confirmed',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:employees,email,' . $employeeId->id,
+            'job_title' => 'nullable|string|max:255',
+            'hire_date' => 'required|date',
         ]);
+        $employee = Employee::findOrFail($employeeId);
         $employee->update($data);
-  /*       return redirect()->route('employees.index')->with('success', 'Employee updated successfully.'); */
+        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
 
     /**
