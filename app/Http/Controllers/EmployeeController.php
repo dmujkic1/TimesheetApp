@@ -99,6 +99,7 @@ class EmployeeController extends Controller
     {
         $this->authorize('delete-employee');
         $employee = Employee::findOrFail($employeeId);
+        
         $employee->delete();
         
         /* return redirect()->route('employees.index')->with('success', 'Employee deleted.'); */

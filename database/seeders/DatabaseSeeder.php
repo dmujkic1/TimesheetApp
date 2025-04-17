@@ -23,7 +23,10 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             RolesAndPermissionsSeeder::class,
             UserSeeder::class,
+            ManagerSeeder::class,
+            
         ]);
+
         //Employee::factory(10)->active()->create();
         //Manager::factory(5)->active()->create();
       /*   Manager::factory()->count(5)->create();

@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Manager;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Date;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Manager>
@@ -15,10 +17,14 @@ class ManagerFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Manager::class;
+    
     public function definition(): array
     {
         return [
-            'user_id' => 1,
+            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'created_at' => now(),
+            'updated_at' => now()
         ];
     }
 
