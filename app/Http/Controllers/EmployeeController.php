@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -95,11 +96,22 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($employeeId)
+    public function destroy(Employee $employee)
     {
-        $this->authorize('delete-employee');
-        $employee = Employee::findOrFail($employeeId);
+        $this->authorize('delete-employee'); //niko ne moze admina i niko ne moze svoju rolu brisat
+        $currentUser = Auth::user();
+        //dd($userEmployee);
+        //dd($employee->id);
+        
+        if ($employee->user->hasRole('admin'))
+        return redirect()->back()->with('error', 'You cannot delete an admin.');
+
+        else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) 
+        return redirect()->back()->with('error', 'A manager cannot delete a manager.');
+
+        $employee->user->delete();
         $employee->delete();
+        return redirect()->back()->with('success', 'Employee successfully deleted!');
         
         /* return redirect()->route('employees.index')->with('success', 'Employee deleted.'); */
         //return response()->noContent();

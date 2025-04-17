@@ -1,12 +1,21 @@
 <template>
     <div>
       <Navbar />
+      <div v-if="props?.flash?.error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+        {{ props.flash.error }}
+      </div>
+
+      <div v-if="props?.flash?.success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+        {{ props.flash.success }}
+      </div>
+
       <h1 class="text-xl font-bold">Lista uposlenika</h1>
       <ul>
         <li v-for="(employee, index) in employees" :key="index">
           {{ employee?.first_name ?? "Nema naziva" }} - {{ employee?.email ?? "Nema maila" }}
           <Link :href="`/employees/modify/${employee.id}`" class="text-blue-500 ml-2">Edit</Link>
-          <button @click="confirmDelete(employee.id)" class="text-red-500 ml-2">Delete</button>
+          <Link :href="`/employees/get/${employee.id}`" class="text-green-500 ml-2">Details</Link>
+          <button @click="confirmDelete(employee.id)" type="button" class="text-red-500 ml-2">Delete</button>
         </li>
       </ul>
   
@@ -32,6 +41,7 @@
   import Navbar from '@/components/Navbar.vue'
   import Footer from '@/components/Footer.vue'
   import { usePage } from '@inertiajs/vue3'
+  import { computed } from 'vue'
   import { ref } from 'vue'
   
   const { props } = usePage()
@@ -46,7 +56,8 @@
   }
   
   const deleteEmployee = () => {
-    router.delete(`/employees/delete/${selectedEmployeeId.value}`, {
+    router.visit(route('employees.destroy', selectedEmployeeId.value), {
+      method: 'delete',
       onSuccess: () => {
         employees.value = employees.value.filter(emp => emp.id !== selectedEmployeeId.value)
         showModal.value = false
@@ -54,6 +65,9 @@
       },
       onError: (errors) => {
         console.error(errors)
+        alert(errors.error ?? "Brisanje nije dozvoljeno.")
+        showModal.value = false
+        selectedEmployeeId.value = null
       }
     })
   }
