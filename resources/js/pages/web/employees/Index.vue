@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50 text-gray-800">
+  <div class="min-h-screen flex flex-col bg-gray-50 text-gray-800"
+      style="background-image: url('/pozadina.jpg');">
     <Navbar />
 
     <!-- Flash poruke -->
