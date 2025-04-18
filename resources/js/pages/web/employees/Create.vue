@@ -52,10 +52,16 @@
     email: '',
     job_title: '',
     hire_date: '',
+    status: 'aktivan',
   })
   
   const submit = () => {
-    form.post('/employees/store')
+    console.log("Submitting form...");
+    form.post('/employees/store', {
+        onError: (errors) => {
+            console.log(errors);  // Ovo će ispisati sve greške sa servera
+        }
+    })
   }
   </script>
   

@@ -21,6 +21,6 @@ Route::prefix('employees')->group(function () {
     Route::get('getAll', [EmployeeController::class, 'index'])->name('employees.index');
     Route::get('get/{employeeId}', [EmployeeController::class, 'show'])->name('employees.show');
     Route::get('edit/{employeeId}', [EmployeeController::class, 'edit'])->name('employees.edit');
-    Route::put('modify/{employeeId}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::put('update/{employeeId}', [EmployeeController::class, 'update'])->name('employees.update');
     Route::delete('delete/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 });

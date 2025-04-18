@@ -13,11 +13,19 @@
       <ul>
         <li v-for="(employee, index) in employees" :key="index">
           {{ employee?.first_name ?? "Nema naziva" }} - {{ employee?.email ?? "Nema maila" }}
-          <Link :href="`/employees/modify/${employee.id}`" class="text-blue-500 ml-2">Edit</Link>
+          <!-- <Link :href="`/employees/modify/${employee.id}`" class="text-blue-500 ml-2">Edit</Link> -->
+          <Link :href="`/employees/edit/${employee.id}`" class="text-blue-500 ml-2">Edit</Link>
           <Link :href="`/employees/get/${employee.id}`" class="text-green-500 ml-2">Details</Link>
           <button @click="confirmDelete(employee.id)" type="button" class="text-red-500 ml-2">Delete</button>
         </li>
       </ul>
+
+      <div>
+        <Link href="/employees/add" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Dodaj zaposlenika
+        </Link>
+        <!-- ostatak tabele/liste -->
+      </div>
   
       <!-- Modal -->
       <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -30,7 +38,7 @@
           </div>
         </div>
       </div>
-  
+
       <Footer />
     </div>
   </template>

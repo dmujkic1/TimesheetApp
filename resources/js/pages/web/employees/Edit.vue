@@ -33,6 +33,15 @@
           <input v-model="form.hire_date" type="date" class="w-full border rounded px-3 py-2" />
           <span class="text-red-500 text-sm" v-if="form.errors.hire_date">{{ form.errors.hire_date }}</span>
         </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700">Status:</label>
+          <select v-model="form.status" class="w-full border rounded px-3 py-2">
+            <option value="aktivan">Aktivan</option>
+            <option value="neaktivan">Neaktivan</option>
+          </select>
+          <span class="text-red-500 text-sm" v-if="form.errors.status">{{ form.errors.status }}</span>
+        </div>
   
         <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Ažuriraj</button>
       </form>
@@ -55,6 +64,7 @@
     email: employee.email || '',
     job_title: employee.job_title || '',
     hire_date: employee.hire_date || '',
+    status: employee.status || '',
   })
   
   const submit = () => {

@@ -7,6 +7,7 @@
       Email uposlenika: {{ employee?.email ?? "Nema maila" }} <br>
       Titula uposlenika: {{ employee?.job_title ?? "Nema titule" }} <br>
       Datum zaposlenja: {{ employee?.hire_date ?? "Nema datuma zaposlenja" }} <br>
+      Aktivan radnik: {{ employee?.status ?? "Nema radnog statusa" }} <br>
       <Footer />
     </div>
   </template>  <!-- //PITATI U DOKUMENTACIJI JE DRUGACIJE -->

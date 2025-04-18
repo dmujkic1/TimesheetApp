@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -45,10 +46,19 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees,email',
             'job_title' => 'nullable|string|max:255',
             'hire_date' => 'required|date',
+            'status' => 'required|string|in:aktivan,neaktivan',
         ]);
+        $validated['status'] = $validated['status'] === 'aktivan';
+        $user = User::create([
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make("mojaSifra"),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $validated['user_id'] = $user->id;
 
         Employee::create($validated);
-
         return redirect()->route('employees.index')->with('success', 'Employee added successfully.');
     }
 
@@ -67,28 +77,32 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Employee $employeeId)
+    public function edit($employeeId)
     {
         $this->authorize('edit-employee');
+        $employee = Employee::findOrFail($employeeId);
         return Inertia::render('web/employees/Edit', [
-            'employee' => $employeeId,
+            'employee' => $employee,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employeeId)
+    public function update(Request $request, $employeeId)
     {
         $this->authorize('update-employee');
+        $employee = Employee::findOrFail($employeeId);
+
         $data = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $employeeId->id,
+            'email' => 'required|email|unique:employees,email,' . $employee->id,
             'job_title' => 'nullable|string|max:255',
             'hire_date' => 'required|date',
+            'status' => 'required|string|in:aktivan,neaktivan',
         ]);
-        $employee = Employee::findOrFail($employeeId);
+        $data['status'] = $data['status'] === 'aktivan';
         $employee->update($data);
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
@@ -109,6 +123,7 @@ class EmployeeController extends Controller
         else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) 
         return redirect()->back()->with('error', 'A manager cannot delete a manager.');
 
+        $employee->update(['status' => false]);
         $employee->user->delete();
         $employee->delete();
         return redirect()->back()->with('success', 'Employee successfully deleted!');
