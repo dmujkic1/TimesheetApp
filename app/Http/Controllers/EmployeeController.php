@@ -95,15 +95,44 @@ class EmployeeController extends Controller
         $employee = Employee::findOrFail($employeeId);
 
         $data = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
+            'last_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/', //ipak min staviti i ugasiti special characters
             'email' => 'required|email|unique:employees,email,' . $employee->id,
-            'job_title' => 'nullable|string|max:255',
+            'job_title' => 'required|string|max:255|min:5|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
             'hire_date' => 'required|date',
             'status' => 'required|string|in:aktivan,neaktivan',
+        ],[
+            'first_name.required' => 'Unesite ime uposlenika.',
+            'first_name.regex' => 'Ime može sadržavati samo slova i razmake.',
+            'first_name.min' => 'Ime mora imati najmanje 3 karaktera.',
+            'first_name.max' => 'Ime može imati najviše 255 karaktera.',
+            'last_name.required' => 'Unesite prezime uposlenika.',
+            'last_name.regex' => 'Prezime može sadržavati samo slova i razmake.',
+            'last_name.min' => 'Prezime mora imati najmanje 3 karaktera.',
+            'last_name.max' => 'Prezime može imati najviše 255 karaktera.',
+            'email.email' => 'Unesite ispravnu email adresu.',
+            'email.unique' => 'Email adresa već postoji.',
+            'email.max' => 'Email adresa može imati najviše 255 karaktera.',
+            'email.min' => 'Email adresa mora imati najmanje 5 karaktera.',
+            'email.required' => 'Unesite prezime uposlenika.', //ERROR PORUKE NA NASEM
+            'job_title.required' => 'Unesite zvanje uposlenika.',
+            'job_title.min' => 'Zvanje mora imati najmanje 5 karaktera.',
+            'job_title.max' => 'Zvanje može imati najviše 255 karaktera.',
+            'job_title.regex' => 'Zvanje može sadržavati samo slova i razmake.',
+            'hire_date.required' => 'Unesite datum zaposlenja uposlenika.',
+            'status.required' => 'Unesite status uposlenika.',
+            'status.in' => 'Status mora biti ili "aktivan" ili "neaktivan".',
         ]);
         $data['status'] = $data['status'] === 'aktivan';
+        //$data['updated_at'] = now();
         $employee->update($data);
+
+        $user = $employee->user;
+        $user->name = $data['first_name'] . ' ' . $data['last_name'];
+        $user->email = $data['email'];
+        //$user->updated_at = now();
+        $user->save();
+
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
 

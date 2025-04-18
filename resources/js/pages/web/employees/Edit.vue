@@ -57,14 +57,19 @@
   
   const { props } = usePage()
   const employee = props.employee
+
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    return dateString.split(' ')[0]
+  }
   
   const form = useForm({
     first_name: employee.first_name || '',
     last_name: employee.last_name || '',
     email: employee.email || '',
     job_title: employee.job_title || '',
-    hire_date: employee.hire_date || '',
-    status: employee.status || '',
+    hire_date: formatDate(employee.hire_date) || '',
+    status: employee.status ? 'aktivan' : 'neaktivan',
   })
   
   const submit = () => {
