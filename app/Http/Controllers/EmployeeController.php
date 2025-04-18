@@ -18,9 +18,9 @@ class EmployeeController extends Controller
     public function index()
     {
         $this->authorize('view-employees');
-        //$employees = Employee::paginate(10);
-        return Inertia::render('web/employees/Index', [ //Employee::select('id')->get(),
-            'employees' => Employee::all(),
+
+        return Inertia::render('web/employees/Index', [
+            'pagination' => Employee::paginate(10),
         ]);
     }
 
@@ -60,7 +60,7 @@ class EmployeeController extends Controller
             'email.unique' => 'Email adresa već postoji.',
             'email.max' => 'Email adresa može imati najviše 255 karaktera.',
             'email.min' => 'Email adresa mora imati najmanje 5 karaktera.',
-            'email.required' => 'Unesite prezime uposlenika.',
+            'email.required' => 'Unesite email uposlenika.',
             'job_title.required' => 'Unesite zvanje uposlenika.',
             'job_title.min' => 'Zvanje mora imati najmanje 5 karaktera.',
             'job_title.max' => 'Zvanje može imati najviše 255 karaktera.',
@@ -135,7 +135,7 @@ class EmployeeController extends Controller
             'email.unique' => 'Email adresa već postoji.',
             'email.max' => 'Email adresa može imati najviše 255 karaktera.',
             'email.min' => 'Email adresa mora imati najmanje 5 karaktera.',
-            'email.required' => 'Unesite prezime uposlenika.', //ERROR PORUKE NA NASEM
+            'email.required' => 'Unesite email uposlenika.', //ERROR PORUKE NA NASEM
             'job_title.required' => 'Unesite zvanje uposlenika.',
             'job_title.min' => 'Zvanje mora imati najmanje 5 karaktera.',
             'job_title.max' => 'Zvanje može imati najviše 255 karaktera.',
