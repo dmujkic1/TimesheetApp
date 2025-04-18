@@ -51,7 +51,7 @@
     last_name: '',
     email: '',
     job_title: '',
-    hire_date: '',
+    hire_date: new Date().toISOString().split('T')[0],
     status: 'aktivan',
   })
   
