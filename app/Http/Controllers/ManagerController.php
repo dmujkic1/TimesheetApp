@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Manager;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,6 +18,8 @@ class ManagerController extends Controller
         $this->authorize('view-managers');
         return Inertia::render('web/managers/Index', [ 
             'managers' => Manager::with('user')->get(),
+            'teams'=>Team::with('manager')->get(),
+            'employees'=>Employee::with('team')->get(),
         ]);
     }
 
