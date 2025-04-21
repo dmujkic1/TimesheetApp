@@ -92,9 +92,9 @@
         </div>
       </div>
     </div>
-
-    <Footer class="mt-auto" />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
   
   
@@ -117,7 +117,7 @@
   const props = defineProps({
     pagination: Object
   })
-  const employees = ref(props.employees)
+  const employees = ref(props.pagination.data)
   
   const showModal = ref(false)
   const selectedEmployeeId = ref(null)
@@ -131,7 +131,7 @@
     router.visit(route('employees.destroy', selectedEmployeeId.value), {
       method: 'delete',
       onSuccess: () => {
-        employees.value = employees.value.filter(emp => emp.id !== selectedEmployeeId.value)
+        //employees.value = employees.value.filter(emp => emp.id !== selectedEmployeeId.value)
         showModal.value = false
         selectedEmployeeId.value = null
       },

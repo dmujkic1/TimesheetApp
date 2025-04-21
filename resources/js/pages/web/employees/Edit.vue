@@ -53,9 +53,9 @@
         </div>
       </form>
     </main>
-
-    <Footer />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
 
 <script setup>

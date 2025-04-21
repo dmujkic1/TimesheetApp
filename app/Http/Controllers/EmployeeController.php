@@ -168,7 +168,8 @@ class EmployeeController extends Controller
         //dd($employee->id);
         
         if ($employee->user->hasRole('admin'))
-        return redirect()->back()->with('error', 'You cannot delete an admin.');
+        return redirect()->route('employees.index')->with('error', 'You cannot delete an admin.');
+        //return redirect()->back()->with('error', 'You cannot delete an admin.');
 
         else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) 
         return redirect()->back()->with('error', 'A manager cannot delete a manager.');

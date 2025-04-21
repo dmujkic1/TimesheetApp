@@ -16,13 +16,13 @@
         class="bg-gradient-to-br from-purple-900 via-purple-900 to-violet-800 text-white px-6 py-4 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.8)] transition hover:scale-105 duration-300"
       >
         <div class="text-xl font-semibold">
-          {{ manager?.user.name ?? 'Nema naziva' }}
+          {{ manager?.user?.name ?? 'Nema naziva' }}
         </div>
         <button
           @click="openModal(manager.user)"
           class="mt-4 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-600 text-white px-5 py-2 rounded-lg shadow-[0_8px_30px_rgba(139,92,246,0.7)] hover:shadow-[0_12px_40px_rgba(168,85,247,0.9)] hover:from-violet-600 hover:via-purple-600 hover:to-fuchsia-700 transition duration-300"
         >
-          Show employees
+          Prikaži zaposlenike
         </button>
       </li>
     </ul>
@@ -73,8 +73,9 @@
         </div>
       </div>
     </div>
-    <Footer />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
 
 <script setup>

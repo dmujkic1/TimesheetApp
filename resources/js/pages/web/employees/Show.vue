@@ -15,9 +15,9 @@
         <p><span class="font-semibold text-purple-700">Aktivan:</span> {{ employee?.status ?? "Nema radnog statusa" }}</p>
       </div>
     </main>
-
-    <Footer />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
 
 <script setup>
