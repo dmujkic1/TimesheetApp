@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50 text-gray-800">
+  <div class="min-h-screen flex flex-col bg-gray-50 text-gray-800"
+  style="background-image: url('/pozadina.jpg');">
     <Navbar />
 
     <main class="flex-grow px-4 py-8 max-w-4xl mx-auto">
