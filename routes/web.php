@@ -32,4 +32,8 @@ Route::prefix('managers')->group(function(){
     Route::get('add', [ManagerController::class, 'create'])->name('managers.create');
     Route::get('getAll', [ManagerController::class, 'index'])->name('managers.index');
 
+
+    Route::put('update/{employeeId}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::delete('delete/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+
 });

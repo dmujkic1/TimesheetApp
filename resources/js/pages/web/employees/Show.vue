@@ -1,18 +1,30 @@
 <template>
-    <div>
-      <h1 class="text-xl font-bold">Podaci uposlenika</h1>
-      Ime uposlenika: {{ employee?.first_name ?? "Nema naziva" }} <br>
-      Prezime uposlenika: {{ employee?.last_name ?? "Nema prezimena" }} <br>
-      Email uposlenika: {{ employee?.email ?? "Nema maila" }} <br>
-      Titula uposlenika: {{ employee?.job_title ?? "Nema titule" }} <br>
-      Datum zaposlenja: {{ employee?.hire_date ?? "Nema datuma zaposlenja" }} <br>
-    </div>
-  </template>  <!-- //PITATI U DOKUMENTACIJI JE DRUGACIJE -->
-  
-  <script setup>
-  import { usePage } from '@inertiajs/vue3'
-  
-  const { props } = usePage()      // ili je moglo const page=usePage() i onda const props=page.props
-  const employee = props.employee //employees iz EmployeesController
-  </script>
-  
+  <div class="min-h-screen flex flex-col bg-gray-50 text-gray-800"
+  style="background-image: url('/pozadina.jpg');">
+    <Navbar />
+
+    <main class="flex-grow px-4 py-8 max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold text-purple-800 mb-6">👤 Podaci uposlenika</h1>
+
+      <div class="bg-white shadow-md rounded-lg p-6 border border-purple-200 space-y-4">
+        <p><span class="font-semibold text-purple-700">Ime:</span> {{ employee?.first_name ?? "Nema naziva" }}</p>
+        <p><span class="font-semibold text-purple-700">Prezime:</span> {{ employee?.last_name ?? "Nema prezimena" }}</p>
+        <p><span class="font-semibold text-purple-700">Email:</span> {{ employee?.email ?? "Nema maila" }}</p>
+        <p><span class="font-semibold text-purple-700">Titula:</span> {{ employee?.job_title ?? "Nema titule" }}</p>
+        <p><span class="font-semibold text-purple-700">Datum zaposlenja:</span> {{ employee?.hire_date ?? "Nema datuma zaposlenja" }}</p>
+        <p><span class="font-semibold text-purple-700">Aktivan:</span> {{ employee?.status ?? "Nema radnog statusa" }}</p>
+      </div>
+    </main>
+
+    <Footer />
+  </div>
+</template>
+
+<script setup>
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import { usePage } from '@inertiajs/vue3'
+
+const { props } = usePage()
+const employee = props.employee
+</script>
