@@ -2,37 +2,30 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class Employee extends Model
+class Project extends Model
 {
-    use HasFactory, SoftDeletes;
 
+    use HasFactory;
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'job_title',
-        'hire_date',
-        'status',
-        'user_id',
-        'team_id'
+        'id',
+        'project_name',
+        'description',
+        'team_id',
+        'deadline'
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
     public function team():BelongsTo
     {
         return $this->belongsTo(Team::class);

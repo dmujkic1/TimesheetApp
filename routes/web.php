@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ManagerController;
+use App\Models\Manager;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,6 +23,17 @@ Route::prefix('employees')->group(function () {
     Route::get('getAll', [EmployeeController::class, 'index'])->name('employees.index');
     Route::get('get/{employeeId}', [EmployeeController::class, 'show'])->name('employees.show');
     Route::get('edit/{employeeId}', [EmployeeController::class, 'edit'])->name('employees.edit');
+    Route::put('modify/{employeeId}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::delete('delete/{employeeId}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+
+});
+
+Route::prefix('managers')->group(function(){
+    Route::get('add', [ManagerController::class, 'create'])->name('managers.create');
+    Route::get('getAll', [ManagerController::class, 'index'])->name('managers.index');
+
+
     Route::put('update/{employeeId}', [EmployeeController::class, 'update'])->name('employees.update');
     Route::delete('delete/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+
 });
