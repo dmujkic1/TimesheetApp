@@ -115,7 +115,8 @@
 
   //const { props } = usePage()
   const props = defineProps({
-    pagination: Object
+    pagination: Object,
+    flash: Object
   })
   const employees = ref(props.pagination.data)
   

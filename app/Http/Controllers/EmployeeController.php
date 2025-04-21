@@ -20,7 +20,7 @@ class EmployeeController extends Controller
         $this->authorize('view-employees');
 
         return Inertia::render('web/employees/Index', [
-            'pagination' => Employee::paginate(10),
+            'pagination' => Employee::paginate(10), //'flash' success i error automatski rade preko Inertia jer su u defineProps
         ]);
     }
 
