@@ -68,11 +68,20 @@
   import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
   
 
+const getCurrentRoute = () => {
+  const pathname = window.location.pathname;
+  if (pathname.includes('employees/getAll')) {
+    return 'Svi zaposlenici';
+  } else if (pathname.includes('managers/getAll')) {
+    return 'Svi menadžeri';
+  } else {
+    return '';
+  }
+};
 
-  const navigation = [
-    { name: 'Svi zaposlenici', href: '/employees/getAll', current: true },
-    { name: 'Svi menadžeri', href: '/managers/getAll', current: false },
-    { name: 'n/a', href: '#', current: false },
-    { name: 'n/a', href: '#', current: false },
-  ]
+const navigation = [
+  { name: 'Svi zaposlenici', href: '/employees/getAll', current: getCurrentRoute() === 'Svi zaposlenici' },
+  { name: 'Svi menadžeri', href: '/managers/getAll', current: getCurrentRoute() === 'Svi menadžeri' },
+  { name: 'n/a', href: '#', current: false },
+];
   </script>
