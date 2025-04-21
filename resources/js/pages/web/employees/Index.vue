@@ -13,7 +13,7 @@
 
     <!-- Naslov i dugme -->
     <div class="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-purple-800">📋 Lista uposlenika</h1>
+      <h1 class="text-3xl font-bold text-white">📋 Lista uposlenika</h1>
       <Link href="/employees/add" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow">
         ➕ Dodaj zaposlenika
       </Link>
