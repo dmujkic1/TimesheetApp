@@ -108,7 +108,7 @@ class EmployeeController extends Controller
         return redirect()->route('employees.index')->with('error', 'Samo admin može uređivati svoje podatke.');
     }
 
-    if ($currentUser->hasRole('manager') && 
+    if ($currentUser->hasRole('manager') &&  //zaista radi
         ($employee->user->hasRole('admin') || $employee->user->hasRole('manager'))) {
         return redirect()->route('employees.index')->with('error', 'Menadžer ne može uređivati admina ili drugog menadžera.');
     }
@@ -131,7 +131,7 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')->with('error', 'Samo admin može uređivati svoje podatke.');
         }
 
-        if ($currentUser->hasRole('manager') && 
+        if ($currentUser->hasRole('manager') && //zaista radi
             ($employee->user->hasRole('admin') || $employee->user->hasRole('manager'))) {
             return redirect()->route('employees.index')->with('error', 'Menadžer ne može uređivati admina ili drugog menadžera.');
         }
@@ -192,7 +192,7 @@ class EmployeeController extends Controller
         return redirect()->route('employees.index')->with('error', 'Ne možete obrisati admina.');
         //return redirect()->back()->with('error', 'You cannot delete an admin.');
 
-        else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) 
+        else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) //zaista radi
         return redirect()->back()->with('error', 'Menadžer ne može obrisati menadžera.');
 
         $employee->update(['status' => false]);
