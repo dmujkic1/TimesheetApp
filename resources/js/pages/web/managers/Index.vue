@@ -6,7 +6,7 @@
     <Navbar />
 
     <h1 class="text-3xl font-extrabold text-white text-center pt-10 drop-shadow-lg">
-      Lista menađera
+      Lista menadžera
     </h1>
 
     <ul class="space-y-6 px-10 pt-10 max-w-3xl mx-auto">
@@ -73,11 +73,13 @@
         </div>
       </div>
     </div>
+    <Footer />
   </div>
 </template>
 
 <script setup>
 import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
 import { ref } from 'vue'
 
 const props = defineProps({

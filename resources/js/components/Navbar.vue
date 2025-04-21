@@ -71,7 +71,7 @@
 
   const navigation = [
     { name: 'Svi zaposlenici', href: '/employees/getAll', current: true },
-    { name: 'n/a', href: '#', current: false },
+    { name: 'Svi menadžeri', href: '/managers/getAll', current: false },
     { name: 'n/a', href: '#', current: false },
     { name: 'n/a', href: '#', current: false },
   ]
