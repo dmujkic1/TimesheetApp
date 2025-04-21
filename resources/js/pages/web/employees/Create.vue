@@ -4,7 +4,7 @@
     <Navbar />
 
     <main class="flex-grow px-4 py-8 max-w-2xl mx-auto">
-      <h1 class="text-3xl font-bold text-purple-800 mb-6">➕ Dodaj novog uposlenika</h1>
+      <h1 class="text-3xl font-bold text-white mb-6">➕ Dodaj novog uposlenika</h1>
 
       <form @submit.prevent="submit" class="bg-white p-6 rounded-lg shadow-md border border-purple-200 space-y-5">
         <div>
@@ -44,9 +44,9 @@
         </div>
       </form>
     </main>
-
-    <Footer />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
 
 <script setup>

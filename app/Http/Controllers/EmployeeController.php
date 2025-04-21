@@ -20,7 +20,7 @@ class EmployeeController extends Controller
         $this->authorize('view-employees');
 
         return Inertia::render('web/employees/Index', [
-            'pagination' => Employee::paginate(10),
+            'pagination' => Employee::paginate(10), //'flash' success i error automatski rade preko Inertia jer su u defineProps
         ]);
     }
 
@@ -42,7 +42,7 @@ class EmployeeController extends Controller
 
         $validated = $request->validate([
             'first_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
-            'last_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/', //ipak min staviti i ugasiti special characters
+            'last_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
             'email' => 'required|email|unique:employees,email',
             'job_title' => 'required|string|max:255|min:5|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
             'hire_date' => 'required|date',
@@ -80,7 +80,7 @@ class EmployeeController extends Controller
         $validated['user_id'] = $user->id;
 
         Employee::create($validated);
-        return redirect()->route('employees.index')->with('success', 'Employee added successfully.');
+        return redirect()->route('employees.index')->with('success', 'Zaposlenik uspješno dodat.');
     }
 
     /**
@@ -99,13 +99,24 @@ class EmployeeController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit($employeeId)
-    {
-        $this->authorize('edit-employee');
-        $employee = Employee::findOrFail($employeeId);
-        return Inertia::render('web/employees/Edit', [
-            'employee' => $employee,
-        ]);
+{
+    $this->authorize('edit-employee');
+    $employee = Employee::findOrFail($employeeId);
+    $currentUser = Auth::user();
+
+    if ($employee->user->hasRole('admin') && $currentUser->id !== $employee->user->id) {
+        return redirect()->route('employees.index')->with('error', 'Samo admin može uređivati svoje podatke.');
     }
+
+    if ($currentUser->hasRole('manager') &&  //zaista radi
+        ($employee->user->hasRole('admin') || $employee->user->hasRole('manager'))) {
+        return redirect()->route('employees.index')->with('error', 'Menadžer ne može uređivati admina ili drugog menadžera.');
+    }
+
+    return Inertia::render('web/employees/Edit', [
+        'employee' => $employee,
+    ]);
+}
 
     /**
      * Update the specified resource in storage.
@@ -114,10 +125,20 @@ class EmployeeController extends Controller
     {
         $this->authorize('update-employee');
         $employee = Employee::findOrFail($employeeId);
+        $currentUser = Auth::user();
+
+        if ($employee->user->hasRole('admin') && $currentUser->id !== $employee->user->id) {
+            return redirect()->route('employees.index')->with('error', 'Samo admin može uređivati svoje podatke.');
+        }
+
+        if ($currentUser->hasRole('manager') && //zaista radi
+            ($employee->user->hasRole('admin') || $employee->user->hasRole('manager'))) {
+            return redirect()->route('employees.index')->with('error', 'Menadžer ne može uređivati admina ili drugog menadžera.');
+        }
 
         $data = $request->validate([
             'first_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
-            'last_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/', //ipak min staviti i ugasiti special characters
+            'last_name' => 'required|string|max:255|min:3|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
             'email' => 'required|email|unique:employees,email,' . $employee->id,
             'job_title' => 'required|string|max:255|min:5|regex:/^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/',
             'hire_date' => 'required|date',
@@ -135,7 +156,7 @@ class EmployeeController extends Controller
             'email.unique' => 'Email adresa već postoji.',
             'email.max' => 'Email adresa može imati najviše 255 karaktera.',
             'email.min' => 'Email adresa mora imati najmanje 5 karaktera.',
-            'email.required' => 'Unesite email uposlenika.', //ERROR PORUKE NA NASEM
+            'email.required' => 'Unesite email uposlenika.',
             'job_title.required' => 'Unesite zvanje uposlenika.',
             'job_title.min' => 'Zvanje mora imati najmanje 5 karaktera.',
             'job_title.max' => 'Zvanje može imati najviše 255 karaktera.',
@@ -154,7 +175,7 @@ class EmployeeController extends Controller
         //$user->updated_at = now();
         $user->save();
 
-        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
+        return redirect()->route('employees.index')->with('success', 'Zaposlenik uspješno ažuriran.');
     }
 
     /**
@@ -168,15 +189,16 @@ class EmployeeController extends Controller
         //dd($employee->id);
         
         if ($employee->user->hasRole('admin'))
-        return redirect()->back()->with('error', 'You cannot delete an admin.');
+        return redirect()->route('employees.index')->with('error', 'Ne možete obrisati admina.');
+        //return redirect()->back()->with('error', 'You cannot delete an admin.');
 
-        else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) 
-        return redirect()->back()->with('error', 'A manager cannot delete a manager.');
+        else if ($employee->user->hasRole('manager') && $currentUser->hasRole('manager')) //zaista radi
+        return redirect()->back()->with('error', 'Menadžer ne može obrisati menadžera.');
 
         $employee->update(['status' => false]);
         $employee->user->delete();
         $employee->delete();
-        return redirect()->back()->with('success', 'Employee successfully deleted!');
+        return redirect()->back()->with('success', 'Zaposlenik uspješno obrisan.');
         
         /* return redirect()->route('employees.index')->with('success', 'Employee deleted.'); */
         //return response()->noContent();
