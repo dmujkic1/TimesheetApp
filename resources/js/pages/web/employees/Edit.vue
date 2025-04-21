@@ -77,7 +77,7 @@ const form = useForm({
   email: employee.email || '',
   job_title: employee.job_title || '',
   hire_date: formatDate(employee.hire_date) || '',
-  status: employee.status === 'aktivan' ? 'aktivan' : 'neaktivan',
+  status: employee.status === true ? 'aktivan' : 'neaktivan',
 })
 
 const submit = () => {
