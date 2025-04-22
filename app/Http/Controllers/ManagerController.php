@@ -20,7 +20,10 @@ class ManagerController extends Controller
             'managers' => Manager::with('user')->get(),
             'teams'=>Team::with('manager')->get(),
             'employees'=>Employee::with('team')->get(),
+            
         ]);
+
+        
     }
 
     /**

@@ -13,6 +13,7 @@ class Project extends Model
 {
 
     use HasFactory;
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -22,8 +23,12 @@ class Project extends Model
         'id',
         'project_name',
         'description',
+        'client_name',
+        'start_date',
+        'end_date',
+        'status',
         'team_id',
-        'deadline'
+        
     ];
 
     public function team():BelongsTo
