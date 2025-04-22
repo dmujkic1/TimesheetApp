@@ -11,7 +11,7 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        
+        if (!$user->hasRole('user')) { $user->assignRole('user'); }
     }
 
     public function afterCreated(User $user): void

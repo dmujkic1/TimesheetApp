@@ -21,7 +21,8 @@ class ProjectFactory extends Factory
             'project_name' => fake()->sentence(1),
             'description' => fake()->paragraph(),
             'team_id' => Team::inRandomOrder()->first()?->id ?? Team::factory(),
-            'deadline' => fake()->dateTimeBetween('now', '+6 months')                
+            'start_date' => fake()->dateTimeBetween('-6 months', 'now'),   
+            'end_date' => fake()->dateTimeBetween('now', '+6 months'),        
         ];
     }
 }

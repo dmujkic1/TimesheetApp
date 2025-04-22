@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('project_name');
             $table->string('description');
             $table->foreignId('team_id')->nullable()->constrained();
-            $table->date('deadline');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
         });
     }
