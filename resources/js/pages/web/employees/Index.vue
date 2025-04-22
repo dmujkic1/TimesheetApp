@@ -26,6 +26,7 @@
           <tr>
             <th class="px-5 py-3 text-left">#</th>
             <th class="px-5 py-3 text-left">Ime</th>
+            <th class="px-5 py-3 text-left">Prezime</th>
             <th class="px-5 py-3 text-left">Email</th>
             <th class="px-5 py-3 text-center">Akcije</th>
           </tr>
@@ -35,6 +36,7 @@
               class="border-t hover:bg-purple-50 transition">
             <td class="px-5 py-3">{{ employee?.id }}</td>
             <td class="px-5 py-3">{{ employee?.first_name ?? "Nepoznato ime" }}</td>
+            <td class="px-5 py-3">{{ employee?.last_name ?? "Nepoznato prezime" }}</td>
             <td class="px-5 py-3">{{ employee?.email ?? "Nepoznat email" }}</td>
             <td class="px-5 py-3 text-center">
               <div class="flex justify-center gap-3 text-sm">
