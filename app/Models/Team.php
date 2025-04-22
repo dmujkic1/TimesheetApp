@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 class Team extends Model
 {
     use HasFactory;
@@ -24,17 +26,17 @@ class Team extends Model
     ];
 
     
-    public function employee(): HasMany
+    public function employee(): BelongsToMany
     {
-        return $this->hasMany(Employee::class);
+        return $this->belongsToMany(Employee::class)->withTimestamps();
     }
     public function manager():BelongsTo
     {
         return $this->belongsTo(Manager::class);
     }
-    public function project():HasOne
+    public function project(): BelongsToMany
     {
-        return $this->hasOne(Project::class);
+        return $this->belongsToMany(Project::class)->withTimestamps();
     }
 
 

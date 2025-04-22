@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,10 +21,11 @@ class ProjectFactory extends Factory
         return [
             'project_name' => fake()->sentence(1),
             'description' => fake()->paragraph(),
-            'team_id' => Team::inRandomOrder()->first()?->id ?? Team::factory(),
+            //'team_id' => Team::inRandomOrder()->first()?->id ?? Team::factory(),
             'start_date' => fake()->dateTimeBetween('now', '+6 months'),    
             'end_date' => fake()->dateTimeBetween('+6 months', '+ 10 months'),
-            'client_name' => fake()->company(),
+            'status' => fake()->randomElement(['pending', 'in progress', 'completed']),
+            'client_id' => Client::inRandomOrder()->first()?->id ?? Client::factory(),
             
         ];
     }
