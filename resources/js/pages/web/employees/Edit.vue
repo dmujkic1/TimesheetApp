@@ -33,7 +33,7 @@
 
         <div>
           <label class="block text-purple-700 font-semibold mb-1">Datum zaposlenja:</label>
-          <input v-model="form.hire_date" type="date" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <input v-model="form.hire_date" type="date" :max="today" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400" />
           <span class="text-red-500 text-sm" v-if="form.errors.hire_date">{{ form.errors.hire_date }}</span>
         </div>
 
@@ -65,6 +65,7 @@ import Footer from '@/components/Footer.vue'
 
 const { props } = usePage()
 const employee = props.employee
+const today = new Date().toISOString().split('T')[0];
 
 const formatDate = (dateString) => {
   if (!dateString) return ''

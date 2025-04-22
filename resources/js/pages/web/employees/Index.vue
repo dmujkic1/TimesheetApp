@@ -19,6 +19,23 @@
       </Link>
     </div>
 
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <input
+        v-model="search"
+        @keydown.enter="searchEmployees"
+        type="text"
+        placeholder="Pretraži po imenu..."
+        class="bg-white text-gray-800 border border-gray-300 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-purple-400"
+      />
+      <button
+        @click="searchEmployees"
+        class="ml-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow"
+      >
+        Pretraži
+      </button>
+    </div>
+
+
     <!-- Tabela -->
     <div class="overflow-x-auto max-w-6xl mx-auto px-4">
       <table class="w-full bg-white shadow rounded-lg overflow-hidden border border-purple-200">
@@ -119,6 +136,21 @@
   import { usePage } from '@inertiajs/vue3'
   import { computed } from 'vue'
   import { ref } from 'vue'
+
+
+  const props = defineProps({
+    pagination: Object,
+    flash: Object,
+    search: String
+  })
+
+  const search = ref(props.search ?? '');
+  const searchEmployees = () => {
+    router.visit(route('employees.index', { search: search.value }), {
+      preserveState: true,
+      preserveScroll: true
+    });
+  };
   
   const changePage = (page) => {
     router.visit(route('employees.index', { page }), {
@@ -126,12 +158,7 @@
       preserveScroll: true,
     })
   }
-
-  //const { props } = usePage()
-  const props = defineProps({
-    pagination: Object,
-    flash: Object
-  })
+  
   const employees = ref(props.pagination.data)
   
   const showModal = ref(false)
