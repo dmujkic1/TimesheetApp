@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -15,12 +16,19 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('view-employees');
+        $query = Employee::query();
+
+        if ($request->filled('search'))
+        $query->where('first_name', 'like', '%' . $request->search . '%')
+            ->orWhere('last_name', 'like', '%' . $request->search . '%')
+            ->orWhere('email', 'like', '%' . $request->search . '%');
 
         return Inertia::render('web/employees/Index', [
-            'pagination' => Employee::paginate(10), //'flash' success i error automatski rade preko Inertia jer su u defineProps
+            'pagination' => $query->paginate(10)->appends(['search' => $request->search]), //'flash' success i error automatski rade preko Inertia jer su u defineProps
+            'search' => $request->search,
         ]);
     }
 
