@@ -21,10 +21,13 @@ class ManagerController extends Controller
         $managers = Manager::with('user')->whereHas('user')->get();
 
         return Inertia::render('web/managers/Index', [ 
+            
             'managers' => $managers,
             'teams' => Team::with('manager')->get(),
             'employees' => Employee::with('team')->get(),
         ]);
+
+        
     }
 
     /**

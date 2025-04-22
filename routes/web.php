@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ProjectController;
 use App\Models\Manager;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,5 +32,16 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('managers')->group(function () {
         //Route::get('add', [ManagerController::class, 'create'])->name('managers.create');
         Route::get('getAll', [ManagerController::class, 'index'])->name('managers.index');
+    });
+
+    Route::prefix('projects')->group(function() {
+        Route::get('add', [ProjectController::class, 'create'])->name('projects.create');
+        Route::get('getAll', [ProjectController::class, 'index'])->name('projects.index');        
+        Route::post('store', [ProjectController::class, 'store'])->name('projects.store');
+        Route::get('get/{projectId}', [ProjectController::class, 'show'])->name('projects.show');
+        Route::get('edit/{projectId}', [ProjectController::class, 'edit'])->name('projects.edit');
+        Route::put('update/{projectId}', [ProjectController::class, 'update'])->name('projects.update');
+        Route::delete('projects/delete/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+        Route::get('archive/{projectId}', [ProjectController::class, 'archive'])->name('projects.archive');
     });
 });

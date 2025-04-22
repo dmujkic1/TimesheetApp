@@ -26,9 +26,12 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'update-employee']);
         Permission::create(['name' => 'delete-employee']);
         Permission::create(['name' => 'view-managers']);
-
-
-
+        Permission::create(['name' => 'create-project']);
+        Permission::create(['name' => 'view-projects']);
+        Permission::create(['name' => 'edit-project']);
+        Permission::create(['name' => 'update-project']);
+        
+        
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
