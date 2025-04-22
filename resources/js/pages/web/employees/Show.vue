@@ -4,7 +4,7 @@
     <Navbar />
 
     <main class="flex-grow px-4 py-8 max-w-4xl mx-auto">
-      <h1 class="text-3xl font-bold text-purple-800 mb-6">👤 Podaci uposlenika</h1>
+      <h1 class="text-3xl font-bold text-white mb-6">👤 Podaci uposlenika</h1>
 
       <div class="bg-white shadow-md rounded-lg p-6 border border-purple-200 space-y-4">
         <p><span class="font-semibold text-purple-700">Ime:</span> {{ employee?.first_name ?? "Nema naziva" }}</p>
@@ -15,9 +15,9 @@
         <p><span class="font-semibold text-purple-700">Aktivan:</span> {{ employee?.status ?? "Nema radnog statusa" }}</p>
       </div>
     </main>
-
-    <Footer />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
 
 <script setup>

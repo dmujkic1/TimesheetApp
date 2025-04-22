@@ -13,11 +13,28 @@
 
     <!-- Naslov i dugme -->
     <div class="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-purple-800">📋 Lista uposlenika</h1>
+      <h1 class="text-3xl font-bold text-white">📋 Lista uposlenika</h1>
       <Link href="/employees/add" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow">
         ➕ Dodaj zaposlenika
       </Link>
     </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <input
+        v-model="search"
+        @keydown.enter="searchEmployees"
+        type="text"
+        placeholder="Pretraži po imenu..."
+        class="bg-white text-gray-800 border border-gray-300 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-purple-400"
+      />
+      <button
+        @click="searchEmployees"
+        class="ml-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow"
+      >
+        Pretraži
+      </button>
+    </div>
+
 
     <!-- Tabela -->
     <div class="overflow-x-auto max-w-6xl mx-auto px-4">
@@ -26,6 +43,7 @@
           <tr>
             <th class="px-5 py-3 text-left">#</th>
             <th class="px-5 py-3 text-left">Ime</th>
+            <th class="px-5 py-3 text-left">Prezime</th>
             <th class="px-5 py-3 text-left">Email</th>
             <th class="px-5 py-3 text-center">Akcije</th>
           </tr>
@@ -35,6 +53,7 @@
               class="border-t hover:bg-purple-50 transition">
             <td class="px-5 py-3">{{ employee?.id }}</td>
             <td class="px-5 py-3">{{ employee?.first_name ?? "Nepoznato ime" }}</td>
+            <td class="px-5 py-3">{{ employee?.last_name ?? "Nepoznato prezime" }}</td>
             <td class="px-5 py-3">{{ employee?.email ?? "Nepoznat email" }}</td>
             <td class="px-5 py-3 text-center">
               <div class="flex justify-center gap-3 text-sm">
@@ -47,15 +66,22 @@
         </tbody>
       </table>
       <!-- Navigacija kroz paginaciju -->
-      <div class="flex justify-center items-center mt-6 mb-20 space-x-2">
+      <div class="flex justify-center items-center mt-6 mb-20 space-x-4">
+
+      <!-- PRETHODNA -->
+      <div class="w-[130px] flex justify-center">
         <button
           v-if="pagination.prev_page_url"
           @click="changePage(pagination.current_page - 1)"
-          class="px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
+          class="w-full text-center px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
         >
           ◀ Prethodna
         </button>
+        <div v-else class="px-3 py-1 invisible">◀ Prethodna</div>
+      </div>
 
+      <!-- Brojevi stranica -->
+      <div class="flex space-x-2 justify-center">
         <button
           v-for="page in pagination.last_page"
           :key="page"
@@ -69,18 +95,23 @@
         >
           {{ page }}
         </button>
+      </div>
 
+      <!-- SLJEDEĆA -->
+      <div class="w-[130px] flex justify-center">
         <button
           v-if="pagination.next_page_url"
           @click="changePage(pagination.current_page + 1)"
-          class="px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
+          class="w-full text-center px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
         >
           Sljedeća ▶
         </button>
+        <div v-else class="px-3 py-1 invisible">Sljedeća ▶</div>
       </div>
 
     </div>
 
+  </div>
     <!-- Modal -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-xl shadow-xl text-center w-full max-w-sm">
@@ -92,9 +123,9 @@
         </div>
       </div>
     </div>
-
-    <Footer class="mt-auto" />
   </div>
+  <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
 </template>
   
   
@@ -105,6 +136,21 @@
   import { usePage } from '@inertiajs/vue3'
   import { computed } from 'vue'
   import { ref } from 'vue'
+
+
+  const props = defineProps({
+    pagination: Object,
+    flash: Object,
+    search: String
+  })
+
+  const search = ref(props.search ?? '');
+  const searchEmployees = () => {
+    router.visit(route('employees.index', { search: search.value }), {
+      preserveState: true,
+      preserveScroll: true
+    });
+  };
   
   const changePage = (page) => {
     router.visit(route('employees.index', { page }), {
@@ -112,12 +158,8 @@
       preserveScroll: true,
     })
   }
-
-  //const { props } = usePage()
-  const props = defineProps({
-    pagination: Object
-  })
-  const employees = ref(props.employees)
+  
+  const employees = ref(props.pagination.data)
   
   const showModal = ref(false)
   const selectedEmployeeId = ref(null)
@@ -131,7 +173,7 @@
     router.visit(route('employees.destroy', selectedEmployeeId.value), {
       method: 'delete',
       onSuccess: () => {
-        employees.value = employees.value.filter(emp => emp.id !== selectedEmployeeId.value)
+        //employees.value = employees.value.filter(emp => emp.id !== selectedEmployeeId.value)
         showModal.value = false
         selectedEmployeeId.value = null
       },

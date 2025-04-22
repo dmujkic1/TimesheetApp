@@ -16,11 +16,15 @@ class ManagerController extends Controller
     public function index()
     {
         $this->authorize('view-managers');
+
+        // Učitavanje menadžera sa povezanim korisnicima, ali samo oni sa validnim korisnicima
+        $managers = Manager::with('user')->whereHas('user')->get();
+
         return Inertia::render('web/managers/Index', [ 
-            'managers' => Manager::with('user')->get(),
-            'teams'=>Team::with('manager')->get(),
-            'employees'=>Employee::with('team')->get(),
             
+            'managers' => $managers,
+            'teams' => Team::with('manager')->get(),
+            'employees' => Employee::with('team')->get(),
         ]);
 
         

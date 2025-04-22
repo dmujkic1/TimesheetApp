@@ -21,7 +21,6 @@ return new class extends Migration
             $table->enum('status', ['Active', 'Archived', 'Completed'])->default('Active')->after('end_date');
             $table->foreignId('team_id')->nullable()->constrained();
             $table->softDeletes(); // adds deleted_at column
-
             $table->timestamps();
         });
     }

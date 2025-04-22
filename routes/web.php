@@ -30,7 +30,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('managers')->group(function () {
-        Route::get('add', [ManagerController::class, 'create'])->name('managers.create');
+        //Route::get('add', [ManagerController::class, 'create'])->name('managers.create');
         Route::get('getAll', [ManagerController::class, 'index'])->name('managers.index');
     });
 

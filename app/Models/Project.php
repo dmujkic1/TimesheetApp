@@ -28,7 +28,7 @@ class Project extends Model
         'end_date',
         'status',
         'team_id',
-        
+
     ];
 
     public function team():BelongsTo
