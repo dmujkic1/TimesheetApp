@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Container\Attributes\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Inertia;
@@ -24,7 +26,8 @@ class EmployeeController extends Controller
         if ($request->filled('search'))
         $query->where('first_name', 'ilike', '%' . $request->search . '%')
             ->orWhere('last_name', 'ilike', '%' . $request->search . '%')
-            ->orWhere('email', 'ilike', '%' . $request->search . '%');
+            ->orWhere('email', 'ilike', '%' . $request->search . '%')
+            ->orWhere(FacadesDB::raw("CONCAT(first_name, ' ', last_name)"), 'ilike', '%' . $request->search . '%');
 
         return Inertia::render('web/employees/Index', [
             'pagination' => $query->paginate(10)->appends(['search' => $request->search]), //'flash' success i error automatski rade preko Inertia jer su u defineProps
