@@ -71,17 +71,17 @@
 const getCurrentRoute = () => {
   const pathname = window.location.pathname;
   if (pathname.includes('employees/getAll')) {
-    return 'Svi zaposlenici';
+    return 'Zaposlenici';
   } else if (pathname.includes('managers/getAll')) {
-    return 'Svi menadžeri';
+    return 'Menadžeri';
   } else {
     return '';
   }
 };
 
 const navigation = [
-  { name: 'Svi zaposlenici', href: '/employees/getAll', current: getCurrentRoute() === 'Svi zaposlenici' },
-  { name: 'Svi menadžeri', href: '/managers/getAll', current: getCurrentRoute() === 'Svi menadžeri' },
+  { name: 'Zaposlenici', href: '/employees/getAll', current: getCurrentRoute() === 'Zaposlenici' },
+  { name: 'Menadžeri', href: '/managers/getAll', current: getCurrentRoute() === 'Menadžeri' },
   { name: 'n/a', href: '#', current: false },
 ];
   </script>

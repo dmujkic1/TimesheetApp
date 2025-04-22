@@ -23,7 +23,8 @@ class Project extends Model
         'project_name',
         'description',
         'team_id',
-        'deadline'
+        'start_date',
+        'end_date',
     ];
 
     public function team():BelongsTo

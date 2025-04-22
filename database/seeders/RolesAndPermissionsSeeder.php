@@ -33,6 +33,7 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $userRole = Role::create(['name' => 'user']);
+        //$userRole->givePermissionTo(['view-employees']);
 
         $employeeRole = Role::create(['name' => 'employee']);
         $employeeRole->givePermissionTo(['view-employees']);

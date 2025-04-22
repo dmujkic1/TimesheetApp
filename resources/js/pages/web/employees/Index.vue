@@ -26,6 +26,7 @@
           <tr>
             <th class="px-5 py-3 text-left">#</th>
             <th class="px-5 py-3 text-left">Ime</th>
+            <th class="px-5 py-3 text-left">Prezime</th>
             <th class="px-5 py-3 text-left">Email</th>
             <th class="px-5 py-3 text-center">Akcije</th>
           </tr>
@@ -35,6 +36,7 @@
               class="border-t hover:bg-purple-50 transition">
             <td class="px-5 py-3">{{ employee?.id }}</td>
             <td class="px-5 py-3">{{ employee?.first_name ?? "Nepoznato ime" }}</td>
+            <td class="px-5 py-3">{{ employee?.last_name ?? "Nepoznato prezime" }}</td>
             <td class="px-5 py-3">{{ employee?.email ?? "Nepoznat email" }}</td>
             <td class="px-5 py-3 text-center">
               <div class="flex justify-center gap-3 text-sm">
@@ -47,15 +49,22 @@
         </tbody>
       </table>
       <!-- Navigacija kroz paginaciju -->
-      <div class="flex justify-center items-center mt-6 mb-20 space-x-2">
+      <div class="flex justify-center items-center mt-6 mb-20 space-x-4">
+
+      <!-- PRETHODNA -->
+      <div class="w-[130px] flex justify-center">
         <button
           v-if="pagination.prev_page_url"
           @click="changePage(pagination.current_page - 1)"
-          class="px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
+          class="w-full text-center px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
         >
           ◀ Prethodna
         </button>
+        <div v-else class="px-3 py-1 invisible">◀ Prethodna</div>
+      </div>
 
+      <!-- Brojevi stranica -->
+      <div class="flex space-x-2 justify-center">
         <button
           v-for="page in pagination.last_page"
           :key="page"
@@ -69,18 +78,23 @@
         >
           {{ page }}
         </button>
+      </div>
 
+      <!-- SLJEDEĆA -->
+      <div class="w-[130px] flex justify-center">
         <button
           v-if="pagination.next_page_url"
           @click="changePage(pagination.current_page + 1)"
-          class="px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
+          class="w-full text-center px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
         >
           Sljedeća ▶
         </button>
+        <div v-else class="px-3 py-1 invisible">Sljedeća ▶</div>
       </div>
 
     </div>
 
+  </div>
     <!-- Modal -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-xl shadow-xl text-center w-full max-w-sm">
