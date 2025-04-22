@@ -22,9 +22,9 @@ class EmployeeController extends Controller
         $query = Employee::query();
 
         if ($request->filled('search'))
-        $query->where('first_name', 'like', '%' . $request->search . '%')
-            ->orWhere('last_name', 'like', '%' . $request->search . '%')
-            ->orWhere('email', 'like', '%' . $request->search . '%');
+        $query->where('first_name', 'ilike', '%' . $request->search . '%')
+            ->orWhere('last_name', 'ilike', '%' . $request->search . '%')
+            ->orWhere('email', 'ilike', '%' . $request->search . '%');
 
         return Inertia::render('web/employees/Index', [
             'pagination' => $query->paginate(10)->appends(['search' => $request->search]), //'flash' success i error automatski rade preko Inertia jer su u defineProps
