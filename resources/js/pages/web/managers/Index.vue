@@ -42,8 +42,9 @@
             />
           </div>
 
-        <div class="text-xl font-semibold">
-          {{ manager?.user?.name ?? 'Nema naziva' }}
+          <div class="text-xl font-semibold">
+            {{ manager?.user?.name ?? 'Nema naziva' }}
+          </div>
 
         </div>
 
