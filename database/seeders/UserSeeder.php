@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(17)->create();
+        User::factory(47)->create();
         $useri = User::all();
         $titule = ['Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.'];
         foreach ($useri as $user) {

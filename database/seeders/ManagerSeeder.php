@@ -12,7 +12,7 @@ class ManagerSeeder extends Seeder
     public function run(): void
     {
         $managerUserIds = [15, 13, 16, 6, 14];
-        $clientUserIds = [19, 20, 21];
+        $clientUserIds = [49, 50, 51];
 
         // menadzeri (ujedno i zaposleni)
         foreach ($managerUserIds as $id) {
