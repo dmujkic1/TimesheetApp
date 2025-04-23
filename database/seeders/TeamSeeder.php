@@ -14,6 +14,22 @@ class TeamSeeder extends Seeder
      */
     public function run(): void
     {
-        Team::factory(5)->create();        
-    }
+        /* Team::factory(5)->create();  */
+        $teams = [
+            ['team_name' => 'Instagram Frontend', 'manager_id' => 1],
+            ['team_name' => 'Instagram Backend', 'manager_id' => 2],
+            ['team_name' => 'Facebook Frontend', 'manager_id' => 3],
+            ['team_name' => 'Facebook Backend', 'manager_id' => 4],
+            ['team_name' => 'X Frontend', 'manager_id' => 5],
+            ['team_name' => 'X Backend', 'manager_id' => 1],
+            ['team_name' => 'SpaceX Frontend', 'manager_id' => 2],
+            ['team_name' => 'SpaceX Backend', 'manager_id' => 3],
+            ['team_name' => 'Grawe Client Guide Frontend', 'manager_id' => 4],
+            ['team_name' => 'Grawe Client Guide Backend', 'manager_id' => 5],
+            ['team_name' => 'Grawe Edu Site Team', 'manager_id' => 1],
+        ];
+        foreach ($teams as $team) {
+            Team::create($team);
+        }
+    }   
 }

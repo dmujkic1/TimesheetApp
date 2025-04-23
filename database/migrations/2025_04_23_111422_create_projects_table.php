@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('project_name');
             $table->text('description');
-            $table->date('start_date')->nullable()->after('client_name');
+            $table->date('start_date')->nullable();
             $table->date('end_date')->nullable()->after('start_date');
             $table->enum('status', ['Active', 'Archived', 'Completed'])->default('Active')->after('end_date');
             //$table->foreignId('team_id')->nullable()->constrained();

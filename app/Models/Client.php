@@ -22,6 +22,7 @@ class Client extends Model
         'address',
         'email',
         'country',
+        'city',
         'user_id',
     ];
 
