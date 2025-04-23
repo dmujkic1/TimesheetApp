@@ -17,7 +17,7 @@ class ProjectTeamSeeder extends Seeder
         $teams = Team::all();
         $projects = Project::all();
 
-        for ($i = 1; $i < count($projects); $i+=2) {
+        for ($i = 1; $i < count($teams); $i+=2) {
             $idProjekta=($i+1)/2;
             $idTima1=$i;
             $idTima2=$i+1;
@@ -28,8 +28,8 @@ class ProjectTeamSeeder extends Seeder
             $team1->project()->attach($project->id);
             $team2->project()->attach($project->id);
         }
-        $tim=$teams->find(count($projects));
-        $projekat=$projects->find(count($teams));
+        $tim=$teams->find(count($teams));
+        $projekat=$projects->find(count($projects));
         $tim->project()->attach($projekat->id);
     }
 }
