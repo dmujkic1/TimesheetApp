@@ -24,7 +24,7 @@ class ProjectFactory extends Factory
             //'team_id' => Team::inRandomOrder()->first()?->id ?? Team::factory(),
             'start_date' => fake()->dateTimeBetween('now', '+6 months'),    
             'end_date' => fake()->dateTimeBetween('+6 months', '+ 10 months'),
-            'status' => fake()->randomElement(['pending', 'in progress', 'completed']),
+            'status' => fake()->randomElement(['Completed', 'Active', 'Archived']),
             'client_id' => Client::inRandomOrder()->first()?->id ?? Client::factory(),
             
         ];
