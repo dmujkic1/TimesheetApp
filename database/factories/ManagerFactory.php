@@ -22,7 +22,6 @@ class ManagerFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'created_at' => now(),
             'updated_at' => now()
         ];

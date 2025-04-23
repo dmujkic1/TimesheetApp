@@ -11,30 +11,43 @@ class ManagerSeeder extends Seeder
 {
     public function run(): void
     {
-        
-        $users = User::all();
+        $managerUserIds = [15, 13, 16, 6, 14];
+        $clientUserIds = [19, 20, 21];
 
-        // Random izaberi 3 usera koji će biti manageri
-        $managers = User::inRandomOrder()->take(5)->get();
-
-        
-
-        // Kreiraj manager zapise samo sa user_id
-        foreach ($managers as $managerUser) {
-            $manager = Manager::factory()->create([
-                'user_id'=> $managerUser->id,
-            ]);
+        // menadzeri (ujedno i zaposleni)
+        foreach ($managerUserIds as $id) {
+            $user = User::find($id);
+            if ($user) {
+                if (!$user->employee) {
+                    $user->employee()->create([
+                        'first_name' => explode(' ', $user->name)[0],
+                        'last_name' => implode(' ', array_slice(explode(' ', $user->name), 1)),
+                        'email' => $user->email,
+                        'job_title' => 'Manager',
+                        'hire_date' => now(),
+                        'status' => true,
+                        'user_id' => $user->id,
+                    ]);
+                }
+                $user->manager()->create([
+                    'user_id' => $user->id,
+                ]);
+            }
         }
 
-        // 4. Ostali useri su obični radnici (employees)
-        $employeeUsers = User::where('id', '!=', $managerUser->id)->inRandomOrder()->take(rand(3,5))->get();
-
-
-        foreach ($employeeUsers as $user) {
-            Employee::factory()->create([
-                'user_id' => $user->id,
-                
-            ]);
+        $otherUsers = User::whereNotIn('id', array_merge($managerUserIds, $clientUserIds))->get();
+        foreach ($otherUsers as $user) {
+            if (!$user->employee) {
+                $user->employee()->create([
+                    'first_name' => explode(' ', $user->name)[0],
+                    'last_name' => implode(' ', array_slice(explode(' ', $user->name), 1)),
+                    'email' => $user->email,
+                    'job_title' => 'Receptionist',
+                    'hire_date' => now(),
+                    'status' => true,
+                    'user_id' => $user->id,
+                ]);
+            }
         }
     }
 }
