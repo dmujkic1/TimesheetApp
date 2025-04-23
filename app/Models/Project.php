@@ -35,7 +35,7 @@ class Project extends Model
 
     public function team(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class)->withTimestamps();
+        return $this->belongsToMany(Team::class, 'projects_teams')->withTimestamps();
     }
     public function client(): BelongsTo
     {
