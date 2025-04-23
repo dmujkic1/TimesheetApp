@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Manager;
 use App\Models\Employee;
+use App\Models\Project;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -21,12 +22,14 @@ class DatabaseSeeder extends Seeder
       
         $this->call([
             RolesAndPermissionsSeeder::class,
-            AdminSeeder::class,
+            //AdminSeeder::class,
             UserSeeder::class,
             ClientSeeder::class,
             ManagerSeeder::class,
             ProjectSeeder::class,
             TeamSeeder::class,
+            EmployeeTeamSeeder::class,
+            ProjectTeamSeeder::class,
         ]);
 
         //Employee::factory(10)->active()->create();

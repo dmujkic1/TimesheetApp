@@ -16,7 +16,7 @@ class ClientSeeder extends Seeder
     public function run(): void
     {
         $klijent1 = User::create([
-            'id' => 19,
+            'id' => 49,
             'name' => 'Mark Zuckerberg',
             'email' => 'zuck@fb.com',
             'password' => Hash::make('password'),
@@ -32,7 +32,7 @@ class ClientSeeder extends Seeder
         ]);
 
         $klijent2 = User::create([
-            'id' => 20,
+            'id' => 50,
             'name' => 'Elon Musk',
             'email' => 'elongate@x.com',
             'password' => Hash::make('password'),
@@ -48,7 +48,7 @@ class ClientSeeder extends Seeder
         ]);
 
         $klijent3 = User::create([
-            'id' => 21,
+            'id' => 51,
             'name' => 'Fikret Hodžić',
             'email' => 'fikro_boss@outlook.com',
             'password' => Hash::make('password'),
