@@ -36,6 +36,6 @@ class Employee extends Model
     }
     public function team(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class)->withTimestamps();
+        return $this->belongsToMany(Team::class, 'employees_teams')->withTimestamps();
     }
 }
