@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('country');
             $table->string('city')->nullable();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->nullable(); //za laksi client CRUD
             $table->timestamps();
             $table->softDeletes();
         });
