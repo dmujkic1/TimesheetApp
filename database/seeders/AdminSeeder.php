@@ -17,11 +17,11 @@ class AdminSeeder extends Seeder
     {
         //User::factory(15)->create();
         //User::create(['dmujkic1', 'dmujkic1@etf.unsa.ba', '2025-04-09 15:57:54', 'mojaSifra']);
-        User::create([
+        /* User::create([
             "name" => "Dino Mujkić",
             "email" => "dinom@gmail.com",
             "password" => Hash::make("mojaSifra")
-        ]);
+        ]); */
         /* User::create([
             "name" => "Dani Mujkić",
             "email" => "danim@gmail.com",

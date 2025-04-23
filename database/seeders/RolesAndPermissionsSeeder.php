@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -52,7 +53,12 @@ class RolesAndPermissionsSeeder extends Seeder
         User::where("email", "dinom@gmail.com")->first()->assignRole('admin'); //od ovog poceti i onda u nekom Controlleru napraviti CRUD da admin moze role davati ljudima
         User::where("email", "danim@gmail.com")->first()->assignRole('user'); */
         
-        User::where("email", "dinom@gmail.com")->first()->assignRole('admin');
+        $dinoUser = User::create([
+            "name" => "Dino Mujkić",
+            "email" => "dinom@gmail.com",
+            "password" => Hash::make("mojaSifra")
+        ]);
+        $dinoUser->assignRole('admin');
         
     }
 }
