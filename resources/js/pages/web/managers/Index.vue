@@ -133,7 +133,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M5.121 17.804A9.004 9.004 0 0012 21a9.004 9.004 0 006.879-3.196M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span class="font-medium">{{ employee.first_name }} {{ employee.last_name }}</span>
+              <span class="font-medium">{{ employee.first_name }} {{ employee.last_name }} -- {{ employee.job_title }}</span>
             </div>
             <span class="text-sm text-purple-700 italic">#{{ employee.id }}</span>
           </li>
