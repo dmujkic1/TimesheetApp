@@ -18,10 +18,10 @@ class ManagerController extends Controller
     {
         $this->authorize('view-managers');
 
-        $managers = Manager::with('user')->whereHas('user')->get();
+        $managers = Manager::with('user')->whereHas('user')->paginate(6);
 
         return Inertia::render('web/managers/Index', [ 
-            'managers' => $managers,
+            'pagination' => $managers,
             'teams' => Team::with('manager')->get(),
             'employees' => Employee::with('user')->get(),
             'employeeTeams' => DB::table('employees_teams')->select('employee_id', 'team_id')->get()
