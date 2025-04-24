@@ -17,6 +17,7 @@ class ManagerSeeder extends Seeder
         // menadzeri (ujedno i zaposleni)
         foreach ($managerUserIds as $id) {
             $user = User::find($id);
+            $user->assignRole('manager');
             if ($user) {
                 if (!$user->employee) {
                     $user->employee()->create([
@@ -28,6 +29,7 @@ class ManagerSeeder extends Seeder
                         'status' => true,
                         'user_id' => $user->id,
                     ]);
+                    $user->assignRole('manager');
                 }
                 $user->manager()->create([
                     'user_id' => $user->id,
