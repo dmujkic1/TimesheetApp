@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Manager;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -43,7 +44,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $employeeRole->givePermissionTo(['view-employees']);
 
         $managerRole = Role::create(['name' => 'manager']);
-        $managerRole->givePermissionTo(['view-employees']);
+        $managerRole->givePermissionTo(['view-employees', 'view-managers']);
 
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo(Permission::all());
@@ -59,6 +60,5 @@ class RolesAndPermissionsSeeder extends Seeder
             "password" => Hash::make("mojaSifra")
         ]);
         $dinoUser->assignRole('admin');
-        
     }
 }

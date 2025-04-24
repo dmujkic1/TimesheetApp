@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Employee;
+use App\Models\Manager;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -37,6 +39,10 @@ class UserSeeder extends Seeder
                 'hire_date' => now(),
                 'status' => true,
             ]);
+        }
+        $employees = Employee::all();
+        foreach ($employees as $employee){
+            $employee->user->assignrole('employee');
         }
     }
 }

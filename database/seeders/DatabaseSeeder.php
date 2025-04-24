@@ -21,10 +21,9 @@ class DatabaseSeeder extends Seeder
     {
       
         $this->call([
-            RolesAndPermissionsSeeder::class,
-            //AdminSeeder::class,
-            UserSeeder::class,
-            ClientSeeder::class,
+            RolesAndPermissionsSeeder::class, //dino admin
+            UserSeeder::class, //dodatnih 47 usera koji su employees
+            ClientSeeder::class, //dodatna 3 usera koji su klijenti
             ManagerSeeder::class,
             ProjectSeeder::class,
             TeamSeeder::class,

@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Manager;
 use App\Models\Team;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ManagerController extends Controller
@@ -17,17 +20,13 @@ class ManagerController extends Controller
     {
         $this->authorize('view-managers');
 
-        // Učitavanje menadžera sa povezanim korisnicima, ali samo oni sa validnim korisnicima
-        $managers = Manager::with('user')->whereHas('user')->get();
-
+        $managers = Manager::with('user')->whereHas('user')->paginate(6);
         return Inertia::render('web/managers/Index', [ 
-            
-            'managers' => $managers,
+            'pagination' => $managers,
             'teams' => Team::with('manager')->get(),
-            'employees' => Employee::with('team')->get(),
+            'employees' => Employee::with('user')->get(),
+            'employeeTeams' => DB::table('employees_teams')->select('employee_id', 'team_id')->get()
         ]);
-
-        
     }
 
     /**
