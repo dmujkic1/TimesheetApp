@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Manager;
 use App\Models\Project;
 use App\Models\Team;
@@ -17,9 +18,10 @@ class ProjectController extends Controller
     {
         $this->authorize('view-projects');
 
-        $projects = Project::all();
+        $projects = Project::with('client')->get();
         return Inertia::render('web/projects/Index', [ 
-            'projects' => $projects
+            'projects' => $projects,
+            'flash'=>session('success')
         ]);
     }
 
@@ -29,7 +31,13 @@ class ProjectController extends Controller
     public function create()
     {
         $this->authorize('create-project');
-        return Inertia::render('web/projects/Create');
+        $teams = Team::select('id','team_name')->get();
+        $clients= Client::select('id', 'name')->get();
+        return Inertia::render('web/projects/Create', [
+            'teams' => $teams, 
+            'clients' => $clients
+
+        ]);
     }
 
     /**
@@ -39,22 +47,32 @@ class ProjectController extends Controller
     {
         $this->authorize('create-project');
 
-         $validated = $request->validate([
+        $validated = $request->validate([
             'project_name' => 'required|string|max:255',
             'description' => 'required|string',
-            'client_name' => 'nullable|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|string|in:Active,Archived,Completed',
-            'team_id' => 'required|exists:teams,id',
+            'team_id' => 'required|array',
+            'team_id.*' => 'exists:teams,id',
+            'client_id' => 'required|exists:clients,id',
         ]);
 
-        $project= Project::create($validated);
+        $project = Project::create([
+            'project_name' => $validated['project_name'],
+            'description' => $validated['description'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'status' => $validated['status'],
+            'client_id' => $validated['client_id'],
+        ]);
 
-        return redirect()->route('projects.index')->with('success', 'Projekt kreiran!');
+        $project->team()->sync($validated['team_id']); 
 
-        
+        return redirect()->route('projects.index')->with('success', 'Projekat uspješno kreiran!');
     }
+
+
 
     /**
      * Display the specified resource.
@@ -74,32 +92,46 @@ class ProjectController extends Controller
     {
         $this->authorize('edit-project');
         $project = Project::findOrFail($projectId);
+        $project->load('team');
+        $teams = Team::all(); // Dohvati sve timove
+        $clients = Client::all();
         return Inertia::render('web/projects/Edit', [
             'project' => $project,
+            'teams' => $teams, 
+            'clients' =>$clients
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project $project)
+    public function update(Request $request, $projectId) 
     {
-        $this->authorize('update-project');
-
         $validated = $request->validate([
             'project_name' => 'required|string|max:255',
             'description' => 'required|string',
-            'client_name' => 'nullable|string|max:255',
+            'client_id' => 'nullable|exists:clients,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|string|in:Active,Archived,Completed',
-            'team_id' => 'required|exists:teams,id',
+            'team_id' => 'array',
+            'team_id.*' => 'integer|exists:teams,id',
         ]);
 
-        $project->update($validated);  // Ažurira projekat sa novim podacima
+        // Učitavanje projekta koji želimo ažurirati
+        $project = Project::findOrFail($projectId); 
 
-        return redirect()->route('projects.index');  // Vraća na listu projekata
+        // Ažuriranje podataka o projektu
+        $project->update($validated);
+
+        // Sinhronizacija timova sa projektom (dodavanje novih timova i uklanjanje neodabranih)
+        $project->team()->sync($validated['team_id']);
+
+        // Preusmjeravanje korisnika na listu projekata sa porukom o uspjehu
+        return Inertia::location(route('projects.index'));
+
     }
+
     
     /**
      * Remove the specified resource from storage.

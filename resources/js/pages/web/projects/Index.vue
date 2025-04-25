@@ -1,121 +1,115 @@
 <template>
-  <div class="p-6">
-    <!-- Prikazivanje flash poruke -->
-    <div v-if="flashMessage" class="bg-green-500 text-white p-4 rounded mb-4">
+  <div
+    class="min-h-screen flex flex-col bg-gray-50 text-gray-800"
+    style="background-image: url('/pozadina.jpg');"
+  >
+    <Navbar />
+
+    <div v-if="flashMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4 mx-auto max-w-6xl">
       {{ flashMessage }}
     </div>
 
-    <h1 class="text-2xl font-bold mb-4">Projekti</h1>
-
-    <div class="mb-4">
+    <div class="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-white">📂 Lista Projekata</h1>
       <Link
         :href="route('projects.create')"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow"
       >
-        + Dodaj projekat
+        ➕ Dodaj Projekat
       </Link>
     </div>
 
-    <table class="w-full bg-white shadow rounded overflow-hidden">
-      <thead class="bg-gray-100 text-black text-sm text-left uppercase font-semibold">
-        <tr>
-          <th class="px-4 py-3">Naziv</th>
-          <th class="px-4 py-3">Klijent</th>
-          <th class="px-4 py-3">Status</th>
-          <th class="px-4 py-3">Akcije</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="project in projects"
-          :key="project.id"
-          class="border-t hover:bg-gray-50 text-black"
-        >
-          <td class="px-4 py-2">{{ project.project_name }}</td>
-          <td class="px-4 py-2">{{ project.client_name ?? 'N/A' }}</td>
-          <td class="px-4 py-2">{{ project.status }}</td>
-          <td class="px-4 py-2 space-x-2">
-            <Link
-              :href="route('projects.edit', project.id)"
-              class="text-blue-600 hover:underline"
-            >
-              Uredi
-            </Link>
-            <button
-              @click="confirmDelete(project.id)"
-              class="text-red-600 hover:underline"
-            >
-              Obriši
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="overflow-x-auto max-w-6xl mx-auto px-6 pb-8">
+      <table class="w-full bg-white shadow rounded-lg overflow-hidden border border-purple-200">
+        <thead class="bg-purple-100 text-purple-900 text-sm font-semibold">
+          <tr>
+            <th class="px-5 py-3 text-left">Naziv</th>
+            <th class="px-5 py-3 text-left">Klijent</th>
+            <th class="px-5 py-3 text-left">Status</th>
+            <th class="px-5 py-3 text-center">Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="project in projects"
+            :key="project.id"
+            class="border-t hover:bg-purple-50 transition"
+          >
+            <td class="px-5 py-3">{{ project.project_name }}</td>
+            <td class="px-5 py-3">{{ project.client?.name ?? 'N/A' }}</td>
+            <td class="px-5 py-3">
+              <span
+                :class="[
+                  'inline-block px-2 py-1 rounded-full font-semibold text-sm',
+                  {
+                    'bg-green-500 text-white': project.status === 'Active',
+                    'bg-yellow-500 text-white': project.status === 'Archived',
+                    'bg-blue-500 text-white': project.status === 'Completed',
+                  },
+                ]"
+              >{{ project.status }}</span>
+            </td>
+            <td class="px-5 py-3 text-center">
+              <div class="flex justify-center gap-3 text-sm">
+                <Link :href="route('projects.edit', project.id)" class="text-purple-600 hover:underline">✏️ Uredi</Link>
+                <button @click="confirmDelete(project.id)" class="text-red-600 hover:underline">🗑️ Obriši</button>
+                <Link :href="route('projects.show', { projectId: project.id })" class="text-green-600 hover:underline">🔍 Detalji</Link>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <!-- Modal za potvrdu brisanja -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    >
-      <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        <h2 class="text-black text-lg font-semibold mb-4">
-          Da li ste sigurni da želite obrisati ovaj projekat?
-        </h2>
-        <div class="flex justify-end gap-3">
-          <button
-            @click="showModal = false"
-            class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-          >
-            Otkaži
-          </button>
-          <button
-            @click="deleteProject"
-            class="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"
-          >
-            Obriši
-          </button>
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-xl shadow-xl text-center w-full max-w-sm">
+        <h2 class="text-xl font-bold text-purple-700 mb-4">Potvrda brisanja</h2>
+        <p class="text-gray-700 mb-4">Jeste li sigurni da želite obrisati ovaj projekat?</p>
+        <div class="flex justify-center gap-4">
+          <button @click="deleteProject" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Obriši</button>
+          <button @click="showModal = false" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Otkaži</button>
         </div>
       </div>
     </div>
   </div>
+  <div class="h-24"><Footer /></div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { router, Link } from '@inertiajs/vue3'
+import { ref } from 'vue';
+import { router, Link } from '@inertiajs/vue3';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
 
-// Props iz controllera
 const props = defineProps({
   projects: Array,
-  flash: Object  // Dodajemo 'flash' objekat koji sadrži poruke sa servera
-})
+  flash: Object,
+});
 
-// Lokalne reaktivne vrijednosti
-const projects = ref(props.projects)
-const showModal = ref(false)
-const selectedProjectId = ref(null)
-const flashMessage = ref(props.flash.success)  // Uzmi flash poruku (ako postoji)
+const projects = ref(props.projects);
+const showModal = ref(false);
+const selectedProjectId = ref(null);
+const flashMessage = ref(props.flash?.success);
 
 const confirmDelete = (id) => {
-  selectedProjectId.value = id
-  showModal.value = true
-}
+  selectedProjectId.value = id;
+  showModal.value = true;
+};
 
-// Funkcija za brisanje
 const deleteProject = () => {
   router.visit(route('projects.destroy', selectedProjectId.value), {
     method: 'delete',
     onSuccess: () => {
-      projects.value = projects.value.filter(p => p.id !== selectedProjectId.value)
-      showModal.value = false
-      selectedProjectId.value = null
+      projects.value = projects.value.filter(p => p.id !== selectedProjectId.value);
+      showModal.value = false;
+      selectedProjectId.value = null;
     },
     onError: (errors) => {
-      console.error(errors)
-      alert(errors.error ?? 'Brisanje nije dozvoljeno.')
-      showModal.value = false
-      selectedProjectId.value = null
-    }
-  })
-}
+      console.error(errors);
+      alert(errors.error ?? 'Brisanje nije dozvoljeno.');
+      showModal.value = false;
+      selectedProjectId.value = null;
+    },
+  });
+};
 </script>

@@ -24,13 +24,10 @@ class Project extends Model
         'id',
         'project_name',
         'description',
-        'client_name',
         'start_date',
         'end_date',
         'status',
-        /* 'team_id', */
         'client_id',
-
     ];
 
     public function team(): BelongsToMany
