@@ -32,6 +32,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'view-projects']);
         Permission::create(['name' => 'edit-project']);
         Permission::create(['name' => 'update-project']);
+        Permission::create(['name' => 'view-project']);
         
         
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
