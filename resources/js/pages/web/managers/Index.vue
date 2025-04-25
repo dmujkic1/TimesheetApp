@@ -3,7 +3,7 @@
     <Navbar />
 
     <h1 class="text-3xl font-extrabold text-white text-center pt-10 drop-shadow-lg">
-      Lista menadžera
+      👨‍💼 Lista menadžera
     </h1>
 
     <ul class="grid grid-cols-1 md:grid-cols-2 gap-6 px-10 pt-10 max-w-6xl mx-auto">
