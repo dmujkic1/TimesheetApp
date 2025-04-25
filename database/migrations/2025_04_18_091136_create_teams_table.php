@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('team_name');
             $table->foreignId('manager_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
-            $table->softDeletes();
+            // $table->softDeletes();
         });
     }
 
