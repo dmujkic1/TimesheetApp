@@ -12,7 +12,7 @@ class TeamController extends Controller
     public function assignForm()
     {
         return Inertia::render('web/teams/Assign', [
-            'teams' => Team::all(),
+            'teams' => Team::with('employee')->get(),
             'employees' => Employee::all(),
         ]);
     }
@@ -28,6 +28,6 @@ class TeamController extends Controller
         $team = Team::find($data['team_id']);
         $team->employee()->sync($data['employee_ids']); // many-to-many
 
-        return redirect()->route('teams.assign.form')->with('success', 'Zaposlenici uspješno dodijeljeni timu.');
+        return redirect()->route('teams.assign.form')->with('success', 'Zaposlenici tima uspješno ažurirani.');
     }
 }
