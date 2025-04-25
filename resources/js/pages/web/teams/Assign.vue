@@ -1,5 +1,6 @@
 <template>
     <div class="bg-cover bg-center min-h-screen" style="background-image: url('/pozadina.jpg');">
+        <Navbar />
         <div class="max-w-3xl mx-auto py-10 px-4">
         <h1 class="text-3xl font-bold text-white mb-8">Dodjela zaposlenika timu</h1>
     
@@ -51,10 +52,13 @@
         </form>
         </div>
     </div>
+    <!-- Rezerviši visinu footera -->
+  <div class="h-24"><Footer /></div>
   </template>
   
   <script setup>
-  import { useForm, usePage } from '@inertiajs/vue3'
+  import Navbar from '@/components/Navbar.vue'
+import { useForm, usePage } from '@inertiajs/vue3'
   
   const props = defineProps({
     teams: Array,
