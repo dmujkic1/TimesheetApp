@@ -3,6 +3,7 @@
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TeamController;
 use App\Models\Manager;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -43,5 +44,15 @@ Route::middleware(['auth'])->group(function () {
         Route::put('update/{projectId}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('projects/delete/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
         Route::get('archive/{projectId}', [ProjectController::class, 'archive'])->name('projects.archive');
+    });
+
+    Route::prefix('teams')->group(function () {
+        Route::get('assign', [TeamController::class, 'assignForm'])->name('teams.assign.form');
+        Route::post('assign', [TeamController::class, 'assignEmployees'])->name('teams.assign');
+    });
+
+    //Fallback/Catchall Route
+    Route::fallback(function () {
+        return Inertia::render('web/screens/404error');
     });
 });

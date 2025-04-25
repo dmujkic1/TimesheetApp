@@ -74,6 +74,8 @@ const getCurrentRoute = () => {
     return 'Zaposlenici';
   } else if (pathname.includes('managers/getAll')) {
     return 'Menadžeri';
+  } else if (pathname.includes('projects/getAll')) {
+    return 'Projekti';
   } else {
     return '';
   }
@@ -82,6 +84,6 @@ const getCurrentRoute = () => {
 const navigation = [
   { name: 'Zaposlenici', href: '/employees/getAll', current: getCurrentRoute() === 'Zaposlenici' },
   { name: 'Menadžeri', href: '/managers/getAll', current: getCurrentRoute() === 'Menadžeri' },
-  { name: 'n/a', href: '#', current: false },
+  { name: 'Projekti', href: '/projects/getAll', current: getCurrentRoute() === 'Projekti' },
 ];
   </script>

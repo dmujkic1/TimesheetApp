@@ -60,48 +60,10 @@
     </ul>
 
     <!-- Navigacija kroz paginaciju -->
-    <div class="flex justify-center items-center mt-6 mb-20 space-x-4">
-      <!-- PRETHODNA -->
-      <div class="w-[130px] flex justify-center">
-        <button
-          v-if="pagination.prev_page_url"
-          @click="changePage(pagination.current_page - 1)"
-          class="w-full text-center px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
-        >
-          ◀ Prethodna
-        </button>
-        <div v-else class="px-3 py-1 invisible">◀ Prethodna</div>
-      </div>
-
-      <!-- Brojevi stranica -->
-      <div class="flex space-x-2 justify-center">
-        <button
-          v-for="page in pagination.last_page"
-          :key="page"
-          @click="changePage(page)"
-          :class="[
-            'px-3 py-1 rounded',
-            page === pagination.current_page
-              ? 'bg-purple-600 text-white'
-              : 'bg-purple-100 hover:bg-purple-200 text-purple-800'
-          ]"
-        >
-          {{ page }}
-        </button>
-      </div>
-
-      <!-- SLJEDEĆA -->
-      <div class="w-[130px] flex justify-center">
-        <button
-          v-if="pagination.next_page_url"
-          @click="changePage(pagination.current_page + 1)"
-          class="w-full text-center px-3 py-1 bg-purple-200 hover:bg-purple-300 text-purple-800 rounded"
-        >
-          Sljedeća ▶
-        </button>
-        <div v-else class="px-3 py-1 invisible">Sljedeća ▶</div>
-      </div>
-    </div>
+    <PaginationNavigation
+      :pagination="pagination"
+      :changePage="changePage"
+    />
 
 
     <!-- Modal -->
@@ -133,7 +95,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M5.121 17.804A9.004 9.004 0 0012 21a9.004 9.004 0 006.879-3.196M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span class="font-medium">{{ employee.first_name }} {{ employee.last_name }}</span>
+              <span class="font-medium">{{ employee.first_name }} {{ employee.last_name }} -- {{ employee.job_title }}</span>
             </div>
             <span class="text-sm text-purple-700 italic">#{{ employee.id }}</span>
           </li>
@@ -161,6 +123,7 @@
 </template>
 
 <script setup>
+import PaginationNavigation from '@/components/PaginationNavigation.vue'
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import { ref } from 'vue'
@@ -188,7 +151,10 @@ const openModal = (manager) => {
 }
 
 const changePage = (page) => {
-  router.visit(route('managers.index', { page }), {
+  router.visit(route('managers.index', {
+      page: page,
+      search: props.search // Očuvaj trenutni search query prilikom paginacije
+    }), {
     preserveState: true,
     preserveScroll: true,
   })
