@@ -153,8 +153,7 @@ const form = ref({
 const errors = ref({});
 
 const submit = () => {
-  form.value.team_id = form.value.team_id.map(team => team.id);
-
+  form.value.team_id= form.value.team_id.map(team=> team.id);
   router.post(route('projects.store'), form.value, {
     onSuccess: () => {
       router.visit(route('projects.index'));
