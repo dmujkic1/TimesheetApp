@@ -44,4 +44,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('projects/delete/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
         Route::get('archive/{projectId}', [ProjectController::class, 'archive'])->name('projects.archive');
     });
+
+    //Fallback/Catchall Route
+   Route::fallback(function () {
+        return Inertia::render('web/screens/404error');
+    });
 });
