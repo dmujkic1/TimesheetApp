@@ -26,7 +26,7 @@ class TeamController extends Controller
         ]);
 
         $team = Team::find($data['team_id']);
-        $team->employees()->sync($data['employee_ids']); // many-to-many
+        $team->employee()->sync($data['employee_ids']); // many-to-many
 
         return redirect()->route('teams.assign.form')->with('success', 'Zaposlenici uspješno dodijeljeni timu.');
     }
