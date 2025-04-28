@@ -10,7 +10,7 @@
       {{ successMessage }}
     </div>
 
-    <div class="max-w-xl mx-auto p-8 bg-white shadow rounded-xl border border-purple-200 mt-10">
+    <div class="max-w-[22rem] mx-auto p-8 bg-white shadow rounded-xl border border-purple-200 mt-10">
       <h1 class="text-3xl font-semibold text-purple-700 mb-8">✏️ Uredi Projekat</h1>
 
       <form @submit.prevent="submit" class="space-y-6">
@@ -146,19 +146,19 @@ const props = defineProps({
   teams: Array,
   clients: Array,
   errors: Object,
-  success: String, // Add success prop
+  success: String, 
 });
 
 const errors = ref({});
 const loading = ref(false);
 const successMessage = ref('');
 
-// Set the success message if it exists
 onMounted(() => {
-  if (props.success) {
-    successMessage.value = props.success;
+  if (props.flash?.success) {
+    successMessage.value = props.flash.success;
   }
 });
+
 
 const selectedTeams = ref(props.project.team || []);
 const form = ref({
@@ -174,14 +174,20 @@ const form = ref({
 const submit = () => {
   form.value.team_id = selectedTeams.value.map(team => team.id);
 
+  loading.value = true; 
+
   router.put(route('projects.update', props.project.id), form.value, {
-    onSuccess: () => {
-      successMessage.value = 'Projekat je uspešno ažuriran!';
-      router.visit(route('projects.index'));
+    onSuccess: (response) => {
+      successMessage.value = response.flash?.success || 'Projekat je uspešno ažuriran!';
+      router.visit(route('projects.index')); 
     },
     onError: (err) => {
       errors.value = err;
     },
+    onFinish: () => {
+      loading.value = false;
+    },
   });
 };
+
 </script>

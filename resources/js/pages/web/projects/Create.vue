@@ -5,7 +5,7 @@
   >
     <Navbar />
 
-    <div class="max-w-xl mx-auto p-8 bg-white shadow rounded-xl border border-purple-200 mt-10">
+    <div class="max-w-[22rem] mx-auto p-8 bg-white shadow rounded-xl border border-purple-200 mt-10">
       <h1 class="text-3xl font-semibold text-purple-700 mb-8">✏️ Kreiraj Projekat</h1>
 
       <form @submit.prevent="submit" class="space-y-6">

@@ -5,9 +5,10 @@
   >
     <Navbar />
 
-    <div v-if="flashMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4 mx-auto max-w-6xl">
-      {{ flashMessage }}
+      <div v-if="flashMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4 mx-auto max-w-6xl">
+    {{ flashMessage }}
     </div>
+
 
     <div class="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
       <h1 class="text-3xl font-bold text-white">📂 Lista Projekata</h1>
