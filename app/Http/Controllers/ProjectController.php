@@ -21,7 +21,7 @@ class ProjectController extends Controller
         $projects = Project::with('client')->get();
         return Inertia::render('web/projects/Index', [ 
             'projects' => $projects,
-            'flash'=>session('success')
+            'flashMessage'=>session('success')
         ]);
     }
 
@@ -35,7 +35,8 @@ class ProjectController extends Controller
         $clients= Client::select('id', 'name')->get();
         return Inertia::render('web/projects/Create', [
             'teams' => $teams, 
-            'clients' => $clients
+            'clients' => $clients,
+            'flashMessage'=> session('success')
 
         ]);
     }
@@ -69,7 +70,9 @@ class ProjectController extends Controller
 
         $project->team()->sync($validated['team_id']); 
 
-        return redirect()->route('projects.index')->with('success', 'Projekat uspješno kreiran!');
+        session()->flash('success', 'Projekat je uspešno kreiran!');
+        return redirect()->route('projects.index');
+
     }
 
 
@@ -80,11 +83,16 @@ class ProjectController extends Controller
     public function show(Project $projectId)
     {
         $this->authorize('view-projects');
+
+        
+        $project = $projectId->load(['team', 'client']);
+
         return Inertia::render('web/projects/Show', [
-            'project' => $projectId
+            'project' => $project,
+            'teams' => $project->team,   
+            'clients' => [$project->client], 
         ]);
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -92,7 +100,7 @@ class ProjectController extends Controller
 {
     $this->authorize('edit-project');
     $project = Project::findOrFail($projectId);
-    $project->load('team'); // OSIGURAJ DA JE OVO PRISUTNO
+    $project->load('team');
     $teams = Team::select('id', 'team_name')->get();
     $clients = Client::select('id', 'name')->get();
     return Inertia::render('web/projects/Edit', [
@@ -114,8 +122,8 @@ class ProjectController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|string|in:Active,Archived,Completed',
-            'team_id' => 'required|array',  // Timovi su sada obavezni
-            'team_id.*' => 'exists:teams,id', // Proverava da li su svi timovi validni
+            'team_id' => 'required|array',  
+            'team_id.*' => 'exists:teams,id', 
         ]);
         
 
@@ -126,11 +134,12 @@ class ProjectController extends Controller
         if (!empty($validated['team_id'])) {
             $project->team()->sync($validated['team_id']);
         }
-
-        return redirect()
-        ->route('projects.index')
-        ->with('success', 'Projekat je uspješno ažuriran.');
-    
+        
+        session()->flash('success', 'Projekat je uspešno ažuriran!');
+        return Inertia::render('web/projects/Index', [
+            'projects' => Project::with('client')->get(),
+            'flashMessage' => session('success'),  
+        ]);
     }
 
 
@@ -143,14 +152,14 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('projects.index')
-                         ->with('success', 'Project has been deleted successfully!');
+                         ->with('success', 'Projekat uspješno izbrisan!');
     }
 
     public function archive(Project $project)
     {
-        $project->update(['status' => 'Archived']);  // Ažurira status projekta na "Archived"
+        $project->update(['status' => 'Archived']);  
 
-        return redirect()->route('projects.index');  // Vraća na listu projekata
+        return redirect()->route('projects.index');  
     }
 
 }
