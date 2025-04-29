@@ -4,6 +4,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TimeSheetController;
 use App\Models\Manager;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -49,6 +50,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('teams')->group(function () {
         Route::get('assign', [TeamController::class, 'assignForm'])->name('teams.assign.form');
         Route::post('assign', [TeamController::class, 'assignEmployees'])->name('teams.assign');
+    });
+
+    Route::prefix('timesheets')->group(function () {
+        Route::get('/', [TimeSheetController::class, 'index'])->name('timesheets.index');
+        Route::get('/entries', [TimesheetController::class, 'entries'])->name('timesheets.entries');
+        Route::post('/store', [TimesheetController::class, 'store'])->name('timesheets.store');
     });
 
     //Fallback/Catchall Route
