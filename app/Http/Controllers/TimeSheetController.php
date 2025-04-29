@@ -86,25 +86,49 @@ class TimeSheetController extends Controller
             'notes' => 'nullable|string|max:500'
         ]);
 
+        //za validaciju vremena oko preklapanja vise projekata odjednom
+        $newEntryStart = Carbon::parse($validated['start_time']);
+        $newEntryEnd = Carbon::parse($validated['end_time']);
+        $newEntryBreakStart = $validated['break_start'] ? Carbon::parse($validated['break_start']) : null;
+        $newEntryBreakEnd = $validated['break_end'] ? Carbon::parse($validated['break_end']) : null;
+
         //unosi tog dana
         $existingEntries = TimeSheet::where('user_id', $currentUser->id)
             ->whereDate('date', $validated['date'])
             ->get();
 
         foreach ($existingEntries as $entry) {
-            if (($validated['start_time'] < $entry->end_time) && ($validated['end_time'] > $entry->start_time)) 
+            $existingEntryStart = $entry->start_time;
+            $existingEntryEnd = $entry->end_time;
+   
+            // Check for overlap: (StartA < EndB) AND (EndA > StartB)
+            if ($newEntryStart < $existingEntryEnd && $newEntryEnd > $existingEntryStart)
             {
-                return back()->withErrors(['error' => 'Unos vremena se preklapa s postojećim unosom.']);
+                return back()->withErrors(['overlap_error' => 'Nije moguće dodati unos. Vrijeme rada se preklapa s postojećim unosom.']);
+            }
+   
+            // Check if the new entry's break overlaps any existing work time
+            if ($newEntryBreakStart && $newEntryBreakEnd) {
+                if ($newEntryBreakStart < $existingEntryEnd && $newEntryBreakEnd > $existingEntryStart) {
+                    return back()->withErrors(['break_error' => 'Pauza se preklapa s postojećim radnim vremenom.']);
+                }
+            }
+        }
+   
+        // Check to ensure new break is within new work hours
+        if ($newEntryBreakStart && $newEntryBreakEnd) {
+            if ($newEntryBreakStart < $newEntryStart || $newEntryBreakEnd > $newEntryEnd) {
+                return back()->withErrors(['break_error' => 'Pauza mora biti unutar radnog vremena.']);
             }
         }
 
         Timesheet::create([
             'user_id' => $currentUser->id,
             'project_id' => $validated['project_id'],
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'break_start' => $validated['break_start'] ? $validated['break_start']  : null,
-            'break_end' => $validated['break_end'] ? $validated['break_end']  : null,
+            'start_time' => $newEntryStart,
+            'end_time' => $newEntryEnd,
+            'break_start' => $newEntryBreakStart,
+            'break_end' => $newEntryBreakEnd,
             'notes' => $validated['notes'] ?? null,
             'date' => $validated['date'],
         ]);
