@@ -14,8 +14,8 @@
       <!-- Calendar grid -->
       <div class="grid grid-cols-7 gap-2">
         <div v-for="(day, i) in daysInMonth" :key="i" @click="!day.isEmpty && openSidebar(day.date)"
-          class="p-3 h-24 bg-white text-black rounded shadow transition cursor-pointer"
-          :class="{ 'hover:bg-purple-50': !day.isEmpty, 'opacity-0 pointer-events-none': day.isEmpty }">
+          class="p-3 h-24 text-black rounded shadow transition cursor-pointer"
+          :class="{'bg-white': !day.isToday, 'hover:bg-purple-50': !day.isEmpty, 'opacity-0 pointer-events-none': day.isEmpty, 'bg-purple-400 border-2': day.isToday }">
           <div v-if="!day.isEmpty">
             <div class="font-semibold">{{ day.label }}</div>
             <div class="text-sm text-gray-500">{{ day.formatted }}</div>
@@ -77,12 +77,13 @@ const loadDays = () => {
   }
 
   for (let day = 1; day <= end.date(); day++) {
-    const date = start.date(day)
+    const date = dayjs(start).date(day )
     days.push({
       label: date.format('dddd'),
       formatted: date.format('YYYY-MM-DD'),
       date: date.format('YYYY-MM-DD'),
-      isEmpty: false
+      isEmpty: false,
+      isToday: date.isSame(dayjs(), 'day')
     })
   }
   daysInMonth.value = days
