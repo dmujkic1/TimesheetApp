@@ -38,4 +38,8 @@ class Project extends Model
     {
         return $this->belongsTo(Client::class);
     }
+    public function manager(): BelongsToMany
+    {
+        return $this->belongsToMany(Manager::class, 'projects_managers')->withTimestamps();
+    }
 }
