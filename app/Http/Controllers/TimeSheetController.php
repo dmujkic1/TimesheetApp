@@ -11,6 +11,15 @@ use Inertia\Inertia;
 
 class TimeSheetController extends Controller
 {
+    private function getUserProjects($user)
+    {
+        $projects = [];
+        foreach ($user->employee->team as $team) {
+            $projects[] = $team->project;
+        }
+        return $projects;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -18,11 +27,15 @@ class TimeSheetController extends Controller
     {
         $this->authorize('view-timesheets');
         $currentUser = Auth::user();
+        $teams = $currentUser->employee->team;
+        $projects = $this->getUserProjects($currentUser);
+
+        //dd($projects);
         
         //idi na project, na njegovu team relaciju a zatim na svaki team idi na employee relaciju i primijeni uslov na Employee
-        $projects = Project::whereHas('team.employee', function ($query) use ($currentUser) {
+        /* $projects = Project::whereHas('team.employee', function ($query) use ($currentUser) {
             $query->where('user_id', $currentUser->id);
-        })->with('team')->get();
+        })->with('team')->get(); */
 
         return Inertia::render('web/timesheets/Index', [
             'projects' => $projects,
@@ -53,9 +66,11 @@ class TimeSheetController extends Controller
                 ];
             });
 
+        $projects = $this->getUserProjects($currentUser);
         return Inertia::render('web/timesheets/Index', [
             'entries' => $entries,
             'selectedDate' => $date,
+            'projects' => $projects,
         ]);
     }
 
