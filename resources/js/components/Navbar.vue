@@ -78,6 +78,8 @@ const getCurrentRoute = () => {
     return 'Projekti';
   } else if (pathname.includes('teams/assign')) {
     return 'Dodjela timu';
+  } else if (pathname.includes('timesheets')) {
+    return 'Timesheets';
   } else {
     return '';
   }
@@ -87,6 +89,7 @@ const navigation = [
   { name: 'Zaposlenici', href: '/employees/getAll', current: getCurrentRoute() === 'Zaposlenici' },
   { name: 'Menadžeri', href: '/managers/getAll', current: getCurrentRoute() === 'Menadžeri' },
   { name: 'Projekti', href: '/projects/getAll', current: getCurrentRoute() === 'Projekti' },
-  { name: 'Dodjela timovima', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
+  { name: 'Dodjela timu', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
+  { name: 'Timesheets', href: '/timesheets', current: getCurrentRoute() === 'Timesheets' },
 ];
   </script>
