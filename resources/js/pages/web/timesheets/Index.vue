@@ -19,6 +19,15 @@
           <div v-if="!day.isEmpty">
             <div class="font-semibold">{{ day.label }}</div>
             <div class="text-sm text-gray-500">{{ day.formatted }}</div>
+            <div>
+              <span v-if="dailyWork[day.formatted]" class="text-green-600 font-bold">
+                Rad: {{ dailyWork[day.formatted] }}
+              </span>
+              <span v-else class="text-red-600 font-bold">
+                Nema unosa
+              </span>
+            </div>
+
           </div>
         </div>
       </div>
@@ -44,6 +53,14 @@ import Footer from '@/components/Footer.vue'
 import SidebarTimesheet from '@/components/SidebarTimesheet.vue'
 import { ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
+import axios from 'axios';
+
+const dailyWork = ref({});
+
+onMounted(async () => {
+    const response = await axios.get('/timesheets/daily-summary');
+    dailyWork.value = response.data;
+});
 
 const props = defineProps({
   projects: Array,
@@ -55,8 +72,6 @@ const showSidebar = ref(false)
 const selectedDate = ref(null)
 const entriesForDate = ref([])
 const projects = ref(props.projects)
-console.log(props.projects) //NEKADA UCITA A NEKADA NE UCITA?????
-console.log(projects.value)
 
 const months = Array.from({ length: 12 }, (_, i) => {
   const date = dayjs().month(i)
@@ -89,8 +104,20 @@ const loadDays = () => {
   daysInMonth.value = days
 }
 
+const loadDailySummary = async () => {
+  const response = await axios.get('/timesheets/daily-summary', {
+    headers: {
+      'Accept': 'application/json'
+    },
+    params: { month: selectedMonth.value },
+    withCredentials: true
+  });
+  dailyWork.value = response.data;
+};
+
 const loadTimesheets = async () => {
   await loadDays()
+  await loadDailySummary()
   router.get(route('timesheets.index', { month: selectedMonth.value }), {}, { preserveState: true })
 }
 

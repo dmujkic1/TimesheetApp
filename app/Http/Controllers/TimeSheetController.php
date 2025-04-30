@@ -5,12 +5,50 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\TimeSheet;
 use Carbon\Carbon;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Inertia\Inertia;
 
 class TimeSheetController extends Controller
 {
+    public function dailyWorkSummary()
+    {
+        $this->authorize('view-timesheets');
+        $entries = TimeSheet::where('user_id', Auth::user()->id)
+            ->get()
+            ->groupBy(function($entry) {
+                return \Carbon\Carbon::parse($entry->date)->format('Y-m-d');
+            });
+
+        $summary = [];
+
+        foreach ($entries as $date => $dailyEntries) {
+            $totalMinutes = 0;
+
+            foreach ($dailyEntries as $entry) {
+                $start = \Carbon\Carbon::parse($entry->start_time);
+                $end = \Carbon\Carbon::parse($entry->end_time);
+                $breakStart = $entry->break_start ? \Carbon\Carbon::parse($entry->break_start) : null;
+                $breakEnd = $entry->break_end ? \Carbon\Carbon::parse($entry->break_end) : null;
+                $totalMinutes += $end->diffInMinutes($start);
+                if ($breakStart && $breakEnd) {
+                    $totalMinutes -= $breakEnd->diffInMinutes($breakStart);
+                }
+            }
+
+            $hours = floor($totalMinutes / 60);
+            $minutes = $totalMinutes % 60;
+            $summary[$date] = "{$hours}h {$minutes}m";
+        }
+        
+        return response()->json($summary);
+    }
+
+
+
     private function getUserProjects($user)
     {
         $projects = [];

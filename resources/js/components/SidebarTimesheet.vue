@@ -10,7 +10,7 @@
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Projekat</label>
         <select v-model="form.project_id" class="w-full border px-3 py-2 rounded bg-white text-black">
-          <option v-for="project in projects" :key="project.id" :value="project.id">
+          <option v-for="project in projects" :key="project[0].id" :value="project[0].id">
             {{ project[0].project_name }}
           </option>
         </select>

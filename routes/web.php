@@ -56,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [TimeSheetController::class, 'index'])->name('timesheets.index');
         Route::get('/entries', [TimesheetController::class, 'entries'])->name('timesheets.entries');
         Route::post('/store', [TimesheetController::class, 'store'])->name('timesheets.store');
+        Route::get('/daily-summary', [TimesheetController::class, 'dailyWorkSummary']);
     });
 
     //Fallback/Catchall Route
