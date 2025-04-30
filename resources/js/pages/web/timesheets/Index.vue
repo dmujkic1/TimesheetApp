@@ -106,11 +106,7 @@ const loadDays = () => {
 
 const loadDailySummary = async () => {
   const response = await axios.get('/timesheets/daily-summary', {
-    headers: {
-      'Accept': 'application/json'
-    },
     params: { month: selectedMonth.value },
-    withCredentials: true
   });
   dailyWork.value = response.data;
 };

@@ -39,9 +39,9 @@ class TimeSheetController extends Controller
                 }
             }
 
-            $hours = floor($totalMinutes / 60);
-            $minutes = $totalMinutes % 60;
-            $summary[$date] = "{$hours}h {$minutes}m";
+            $hours = floor(abs($totalMinutes) / 60);
+            $minutes = abs($totalMinutes) % 60;
+            $summary[$date] = "{$hours}h{$minutes}min";
         }
         
         return response()->json($summary);
