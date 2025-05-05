@@ -22,7 +22,7 @@
 
     <!-- Dugme za prikaz forme -->
     <div class="mb-4 flex justify-end">
-      <button @click="showForm = !showForm" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+      <button @click="toggleForm" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
         {{ showForm ? 'Sakrij formu za unos' : 'Novi unos' }}
       </button>
     </div>
@@ -124,6 +124,16 @@ onMounted(() => {
 const isEditMode = ref(false)
 const editingId = ref(null)
 
+function toggleForm() {
+  // reset prilikom sakrivanja forme
+  if (showForm.value) {
+    isEditMode.value = false;
+    editingId.value = null;
+    resetForm();
+  }
+  showForm.value = !showForm.value; //toggle true-false false-true
+}
+
 function editEntry(entry) {
   isEditMode.value = true
   showForm.value = true
@@ -144,6 +154,17 @@ function editEntry(entry) {
   console.log('Form project_id:', form.value.project_id)
 }
 
+function resetForm() {
+  form.value = {
+    project_id: null,
+    start_time: '',
+    end_time: '',
+    break_start: '',
+    break_end: '',
+    notes: '',
+    date: props.date
+  };
+}
 
 function submit() {
   console.log('Editing ID:', editingId.value)
