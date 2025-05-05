@@ -221,14 +221,47 @@ class TimeSheetController extends Controller
      */
     public function update(Request $request, TimeSheet $timeSheet)
     {
-        //
+        $this->authorize('edit-timesheet');
+
+        if ($timeSheet->user_id !== Auth::user()->id) {
+            abort(403);
+        }
+
+        $validatedData = $request->validate([
+            'date' => 'required|date_format:Y-m-d',
+            'project_id' => 'required|exists:projects,id',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+            'break_start' => 'nullable',
+            'break_end' => 'nullable|after:break_start',
+            'notes' => 'nullable|string|max:500|min:4'
+        ]);
+
+        $timeSheet->update([
+            'date' => $validatedData['date'],
+            'project_id' => $validatedData['project_id'],
+            'start_time' => $validatedData['start_time'],
+            'end_time' => $validatedData['end_time'],
+            'break_start' => $validatedData['break_start'],
+            'break_end' => $validatedData['break_end'],
+            'notes' => $validatedData['notes'],
+        ]);
+
+        return response()->json(['message' => 'Unos uspješno ažuriran.']);
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(TimeSheet $timeSheet)
     {
-        //
+        $this->authorize('delete-timesheet');
+        if ($timeSheet->user_id !== Auth::user()->id) {
+            abort(403);
+        }
+
+        $timeSheet->delete();
+        return response()->json(['message' => 'Unos uspješno obrisan.']);
     }
 }

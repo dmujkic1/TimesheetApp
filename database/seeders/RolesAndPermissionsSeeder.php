@@ -35,6 +35,9 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'view-project']);
         Permission::create(['name' => 'view-timesheets']);
         Permission::create(['name' => 'create-timesheet']);
+        Permission::create(['name' => 'edit-timesheet']);
+        Permission::create(['name' => 'update-timesheet']);
+        Permission::create(['name' => 'delete-timesheet']);
         
         
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
