@@ -53,12 +53,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('timesheets')->group(function () {
-        Route::get('/', [TimeSheetController::class, 'index'])->name('timesheets.index');
+        Route::get('/', [TimesheetController::class, 'index'])->name('timesheets.index');
         Route::get('/entries', [TimesheetController::class, 'entries'])->name('timesheets.entries');
         Route::post('/store', [TimesheetController::class, 'store'])->name('timesheets.store');
         Route::get('/daily-summary', [TimesheetController::class, 'dailyWorkSummary']);
-        Route::delete('/delete/{timeSheet}', [TimesheetController::class, 'destroy'])->name('timesheets.destroy');
-        Route::put('/update/{timeSheet}', [TimesheetController::class, 'update'])->name('timesheets.update');
+        Route::delete('/delete/{timesheet}', [TimesheetController::class, 'destroy'])->name('timesheets.destroy');
+        Route::put('/update/{timesheet}', [TimesheetController::class, 'update'])->name('timesheets.update');
     });
 
     //Fallback/Catchall Route

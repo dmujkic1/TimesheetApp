@@ -72,8 +72,14 @@
     </div>
 
     <!-- Sidebar -->
-    <SidebarTimesheet v-if="showSidebar" :date="selectedDate" :projects="projects" :entries="entriesForDate"
-      @close="showSidebar = false" @saved="handleSaved" />
+    <SidebarTimesheet
+    v-if="showSidebar" 
+    :date="selectedDate" 
+    :projects="projects" 
+    :entries="entriesForDate"
+    @close="showSidebar = false" 
+    @saved="handleSaved"
+    @deleted="handleSaved" />
   </div>
   <div class="h-24">
     <Footer />

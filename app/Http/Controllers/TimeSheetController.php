@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Models\TimeSheet;
+use App\Models\Timesheet;
 use Carbon\Carbon;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Inertia\Inertia;
 
-class TimeSheetController extends Controller
+class TimesheetController extends Controller
 {
     public function dailyWorkSummary()
     {
         $this->authorize('view-timesheets');
-        $entries = TimeSheet::where('user_id', Auth::user()->id)
+        $entries = Timesheet::where('user_id', Auth::user()->id)
             ->get()
             ->groupBy(function($entry) {
                 return \Carbon\Carbon::parse($entry->date)->format('Y-m-d');
@@ -88,7 +88,7 @@ class TimeSheetController extends Controller
         $currentUser = Auth::user();
         $date = $request->date;
 
-        $entries = TimeSheet::where('user_id', $currentUser->id)
+        $entries = Timesheet::where('user_id', $currentUser->id)
             ->whereDate('date', $date)
             ->with('project')
             ->get()
@@ -96,6 +96,7 @@ class TimeSheetController extends Controller
                 return [
                     'id' => $entry->id,
                     'project' => $entry->project->project_name,
+                    'project_id' => $entry->project->id,
                     'start_time' => $entry->start_time,
                     'end_time' => $entry->end_time,
                     'break_start' => $entry->break_start ? $entry->break_start : null,
@@ -157,7 +158,7 @@ class TimeSheetController extends Controller
         $newEntryBreakEnd = $validated['break_end'] ? Carbon::parse($validated['break_end']) : null;
 
         //unosi tog dana
-        $existingEntries = TimeSheet::where('user_id', $currentUser->id)
+        $existingEntries = Timesheet::where('user_id', $currentUser->id)
             ->whereDate('date', $validated['date'])
             ->get();
 
@@ -203,7 +204,7 @@ class TimeSheetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TimeSheet $timeSheet)
+    public function show(Timesheet $timesheet)
     {
         //
     }
@@ -211,7 +212,7 @@ class TimeSheetController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TimeSheet $timeSheet)
+    public function edit(Timesheet $timesheet)
     {
         //
     }
@@ -219,11 +220,13 @@ class TimeSheetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TimeSheet $timeSheet)
+    public function update(Request $request, Timesheet $timesheet)
     {
+        //$timesheet = Timesheet::find($timesheet);
         $this->authorize('edit-timesheet');
-
-        if ($timeSheet->user_id !== Auth::user()->id) {
+        //dd($timesheet->user_id, Auth::user()->id);
+        //dd($timesheet['user_id']);
+        if ($timesheet->user_id !== Auth::user()->id) {
             abort(403);
         }
 
@@ -237,7 +240,7 @@ class TimeSheetController extends Controller
             'notes' => 'nullable|string|max:500|min:4'
         ]);
 
-        $timeSheet->update([
+        $timesheet->update([
             'date' => $validatedData['date'],
             'project_id' => $validatedData['project_id'],
             'start_time' => $validatedData['start_time'],
@@ -247,21 +250,21 @@ class TimeSheetController extends Controller
             'notes' => $validatedData['notes'],
         ]);
 
-        return response()->json(['message' => 'Unos uspješno ažuriran.']);
+        return redirect()->back()->with('success', 'Unos uspješno ažuriran!');
     }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TimeSheet $timeSheet)
+    public function destroy(Timesheet $timesheet)
     {
         $this->authorize('delete-timesheet');
-        if ($timeSheet->user_id !== Auth::user()->id) {
+        if ($timesheet->user_id !== Auth::user()->id) {
             abort(403);
         }
 
-        $timeSheet->delete();
-        return response()->json(['message' => 'Unos uspješno obrisan.']);
+        $timesheet->delete();
+        return redirect()->back()->with('success', 'Unos uspješno obrisan!');
     }
 }
