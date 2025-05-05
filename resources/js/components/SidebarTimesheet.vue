@@ -14,36 +14,48 @@
             {{ project[0].project_name }}
           </option>
         </select>
+        <p v-if="errors.project_id" class="text-red-600 text-sm mt-1">{{ errors.project_id }}</p>
       </div>
   
       <!-- Početak rada -->
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Početak rada</label>
         <input type="time" v-model="form.start_time" class="w-full border px-3 py-2 rounded text-black" />
+        <p v-if="errors.start_time" class="text-red-600 text-sm mt-1">{{ errors.start_time }}</p>
+        <p v-if="errors.overlap_error" class="text-red-600 text-sm mb-4">{{ errors.overlap_error }}</p>
+
       </div>
   
       <!-- Kraj rada -->
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Kraj rada</label>
         <input type="time" v-model="form.end_time" class="w-full border px-3 py-2 rounded text-black" />
+        <p v-if="errors.end_time" class="text-red-600 text-sm mt-1">{{ errors.end_time }}</p>
+        <p v-if="errors.overlap_error" class="text-red-600 text-sm mb-4">{{ errors.overlap_error }}</p>
+
       </div>
   
       <!-- Pauza (od) -->
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Pauza (od)</label>
         <input type="time" v-model="form.break_start" class="w-full border px-3 py-2 rounded text-black" />
+        <p v-if="errors.break_start" class="text-red-600 text-sm mt-1">{{ errors.break_start }}</p>
+        <p v-if="errors.break_error" class="text-red-600 text-sm mb-4">{{ errors.break_error }}</p>
       </div>
   
       <!-- Pauza (do) -->
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Pauza (do)</label>
         <input type="time" v-model="form.break_end" class="w-full border px-3 py-2 rounded text-black" />
+        <p v-if="errors.break_end" class="text-red-600 text-sm mt-1">{{ errors.break_end }}</p>
+        <p v-if="errors.break_error" class="text-red-600 text-sm mb-4">{{ errors.break_error }}</p>
       </div>
   
       <!-- Bilješka -->
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Bilješka</label>
         <textarea v-model="form.notes" class="w-full border px-3 py-2 rounded text-black" rows="3"></textarea>
+        <p v-if="errors.notes" class="text-red-600 text-sm mt-1">{{ errors.notes }}</p>
       </div>
   
       <!-- Submit dugme -->
@@ -58,6 +70,7 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import { router } from '@inertiajs/vue3'
+  const errors = ref({})
   
   const props = defineProps({
     date: String, // Ovo je kliknuti dan u kalendaru
@@ -99,7 +112,8 @@
       emit('saved')
       emit('close')
     },
-    onError: (errors) => {
+    onError: (err) => {
+      errors.value = err
       console.error('Greške pri slanju forme:', errors)
     }
   })

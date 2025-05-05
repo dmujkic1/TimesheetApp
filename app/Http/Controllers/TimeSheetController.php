@@ -136,7 +136,18 @@ class TimeSheetController extends Controller
             'end_time' => 'required|after:start_time',
             'break_start' => 'nullable',
             'break_end' => 'nullable|after:break_start',
-            'notes' => 'nullable|string|max:500'
+            'notes' => 'nullable|string|max:500|min:4'
+        ],
+        [
+            'date.required' => 'Datum je obavezan.',
+            'project_id.required' => 'Projekt je obavezan.',
+            'start_time.required' => 'Vrijeme početka rada je obavezno.',
+            'end_time.required' => 'Vrijeme završetka rada je obavezno.',
+            'end_time.after' => 'Vrijeme završetka mora biti nakon vremena početka.',
+            'break_start.after' => 'Vrijeme početka pauze mora biti nakon vremena početka.',
+            'break_end.after' => 'Vrijeme završetka pauze mora biti nakon vremena početka pauze.',
+            'notes.max' => 'Napomena može sadržavati najviše 500 znakova.',
+            'notes.min' => 'Napomena mora sadržavati najmanje 4 znaka.',
         ]);
 
         //za validaciju vremena oko preklapanja vise projekata odjednom
