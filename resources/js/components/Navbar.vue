@@ -78,8 +78,12 @@ const getCurrentRoute = () => {
     return 'Projekti';
   } else if (pathname.includes('teams/assign')) {
     return 'Dodjela timu';
+  } else if (pathname.includes('manager/timesheets/pending-approvals')) {
+    return 'Timesheets na provjeri';
   } else if (pathname.includes('timesheets')) {
     return 'Timesheets';
+  } else if (pathname.includes('manager/timesheets/pending-approvals')) {
+    return 'Timesheets na provjeri';
   } else {
     return '';
   }
@@ -91,5 +95,6 @@ const navigation = [
   { name: 'Projekti', href: '/projects/getAll', current: getCurrentRoute() === 'Projekti' },
   { name: 'Dodjela timu', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
   { name: 'Timesheets', href: '/timesheets', current: getCurrentRoute() === 'Timesheets' },
+  { name: 'Timesheets na provjeri', href: '/manager/timesheets/pending-approvals', current: getCurrentRoute() === 'Timesheets na provjeri' },
 ];
   </script>

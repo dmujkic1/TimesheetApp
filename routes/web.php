@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ManagerTimesheetController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimeSheetController;
@@ -56,9 +57,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [TimesheetController::class, 'index'])->name('timesheets.index');
         Route::get('/entries', [TimesheetController::class, 'entries'])->name('timesheets.entries');
         Route::post('/store', [TimesheetController::class, 'store'])->name('timesheets.store');
-        Route::get('/daily-summary', [TimesheetController::class, 'dailyWorkSummary']);
+        Route::get('/daily-summary', [TimesheetController::class, 'dailyWorkSummary'])->name('dailySummary');
         Route::delete('/delete/{timesheet}', [TimesheetController::class, 'destroy'])->name('timesheets.destroy');
         Route::put('/update/{timesheet}', [TimesheetController::class, 'update'])->name('timesheets.update');
+        Route::post('/submit-month', [TimesheetController::class, 'submitMonth'])->name('timesheets.submitMonth');
+    });
+
+    Route::prefix('manager/timesheets')->name('manager.timesheets.')->group(function () {
+        Route::get('/pending-approvals', [ManagerTimesheetController::class, 'index'])->name('pending');
+        Route::patch('/approve/{timesheet}', [TimesheetController::class, 'approveTimesheetEntry'])->name('approveEntry');
+        Route::patch('/reject/{timesheet}', [TimesheetController::class, 'rejectTimesheetEntry'])->name('rejectEntry');
     });
 
     //Fallback/Catchall Route

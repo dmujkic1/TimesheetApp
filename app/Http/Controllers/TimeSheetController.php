@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Timesheet;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class TimesheetController extends Controller
@@ -47,7 +49,93 @@ class TimesheetController extends Controller
         return response()->json($summary);
     }
 
+    public function submitMonth(Request $request)
+    {
+        $this->authorize('submit-timesheets');
 
+        $validated = $request->validate([
+            'month' => 'required|date_format:Y-m',
+        ]);
+    
+        $currentUser = Auth::user();
+        $monthCarbon = Carbon::parse($validated['month']);
+    
+        // Provjera da li je mjesec završen
+        if ($monthCarbon->endOfMonth()->isFuture()) {
+            return redirect()->back()->with('error', 'Ne možete predati unose za mjesec koji još nije završen.');
+        }
+    
+        $startOfMonth = $monthCarbon->copy()->startOfMonth();
+        $endOfMonth = $monthCarbon->copy()->endOfMonth();
+    
+        $entriesToSubmit = Timesheet::where('user_id', $currentUser->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Draft')
+            ->orWhere('status', '!=', 'Rejected')
+            ->get();
+    
+        if ($entriesToSubmit->isEmpty()) {
+            return redirect()->route('timesheets.index')->with('error', 'Nema radnih unosa u statusu "Draft" ili "Rejected" za predaju za odabrani mjesec.');
+        }
+    
+        $updatedCount = Timesheet::where('user_id', $currentUser->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Draft')
+            ->orWhere('status', 'Rejected')
+            ->update(['status' => 'Submitted']);
+    
+        if ($updatedCount > 0) {
+            $managers = User::whereHas('roles', function ($query) {
+                $query->where('name', 'manager');
+            })->get();
+   
+            // --- Logika Notifikacija --- FALI
+    
+            return redirect()->route('timesheets.index', ['month' => $validated['month']])->with('success', 'Unosi za ' . $monthCarbon->format('F Y') . ' su uspješno predati na odobrenje.');
+        } else {
+            return redirect()->route('timesheets.index', ['month' => $validated['month']])->with('error', 'Nije bilo unosa za predaju.');
+        }
+    }
+
+    public function approveTimesheetEntry(Request $request, Timesheet $timesheet)
+    {
+        $this->authorize('approve-timesheets');
+
+        if ($timesheet->status !== 'Submitted') {
+            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
+        }
+
+        $timesheet->update([
+            'status' => 'Approved',
+            'rejection_reason' => null, //ako je prethodno bio odbijen, reset sada
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odobren.");
+    }
+
+    public function rejectTimesheetEntry(Request $request, Timesheet $timesheet)
+    {
+        $this->authorize('reject-timesheets');
+
+        if ($timesheet->status !== 'Submitted') {
+            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
+        }
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|min:4|max:500',
+        ]);
+        $timesheet->update([
+            'status' => 'Rejected',
+            'rejection_reason' => $validated['rejection_reason'],
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odbijen.");
+    }
+
+    
 
     private function getUserProjects($user)
     {
@@ -125,7 +213,7 @@ class TimesheetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request) //ne stavljamo status - draft (jer je to migracijom defaultno)
     {
         $this->authorize('create-timesheet');
         $currentUser = Auth::user();
