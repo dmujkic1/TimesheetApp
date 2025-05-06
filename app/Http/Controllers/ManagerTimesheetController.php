@@ -24,7 +24,7 @@ class ManagerTimesheetController extends Controller
                                  ->withQueryString();
 
         return Inertia::render('web/timesheets/PendingApprovals', [
-            'pagination' => $query,
+            'pagination' => $query->paginate(15),
             'pendingEntries' => $pendingEntries,
         ]);
     }
