@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Manager extends Model
@@ -32,5 +33,8 @@ class Manager extends Model
     {
         return $this->hasMany(Team::class);
     }
-    
+    public function project(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'projects_managers')->withTimestamps();
+    }
 }
