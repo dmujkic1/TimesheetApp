@@ -198,7 +198,8 @@ class TimesheetController extends Controller
             'date' => $validated['date'],
         ]);
 
-        return redirect()->back()->with('success', 'Timesheet spašen!');
+        //return redirect()->back()->with('success', 'Timesheet spašen!');
+        return redirect()->route('timesheets.index')->with('success', 'Radni unos uspješno dodat.');
     }
 
     /**
@@ -238,6 +239,16 @@ class TimesheetController extends Controller
             'break_start' => 'nullable',
             'break_end' => 'nullable|after:break_start',
             'notes' => 'nullable|string|max:500|min:4'
+        ],[
+            'date.required' => 'Datum je obavezan.',
+            'project_id.required' => 'Projekt je obavezan.',
+            'start_time.required' => 'Vrijeme početka rada je obavezno.',
+            'end_time.required' => 'Vrijeme završetka rada je obavezno.',
+            'end_time.after' => 'Vrijeme završetka mora biti nakon vremena početka.',
+            'break_start.after' => 'Vrijeme početka pauze mora biti nakon vremena početka.',
+            'break_end.after' => 'Vrijeme završetka pauze mora biti nakon vremena početka pauze.',
+            'notes.max' => 'Napomena može sadržavati najviše 500 znakova.',
+            'notes.min' => 'Napomena mora sadržavati najmanje 4 znaka.', 
         ]);
 
         $timesheet->update([
@@ -250,7 +261,8 @@ class TimesheetController extends Controller
             'notes' => $validatedData['notes'],
         ]);
 
-        return redirect()->back()->with('success', 'Unos uspješno ažuriran!');
+        //return redirect()->back()->with('success', 'Unos uspješno ažuriran!');
+        return redirect()->route('timesheets.index')->with('success', 'Unos uspješno ažuriran!');
     }
 
 
@@ -265,6 +277,7 @@ class TimesheetController extends Controller
         }
 
         $timesheet->delete();
-        return redirect()->back()->with('success', 'Unos uspješno obrisan!');
+        //return redirect()->back()->with('success', 'Unos uspješno obrisan!');
+        return redirect()->route('timesheets.index')->with('success', 'Unos uspješno obrisan!');
     }
 }

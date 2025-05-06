@@ -187,6 +187,7 @@ function submit() {
   method: isEditMode.value ? 'put' : 'post',
   data: payload,
   preserveScroll: true,
+  preserveState: true,
   onSuccess: () => {console.log("Unos je uspješno ažuriran");
     emit('saved')
     emit('close')
