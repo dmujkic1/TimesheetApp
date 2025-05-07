@@ -319,6 +319,10 @@ class TimesheetController extends Controller
             abort(403);
         }
 
+        if ($timesheet->status == 'Approved') {
+            return redirect()->route('timesheets.index')->with('error', 'Ne možeš ažurirati timesheete koji su već odobreni!');
+        }
+
         $validatedData = $request->validate([
             'date' => 'required|date_format:Y-m-d',
             'project_id' => 'required|exists:projects,id',
@@ -347,6 +351,7 @@ class TimesheetController extends Controller
             'break_start' => $validatedData['break_start'],
             'break_end' => $validatedData['break_end'],
             'notes' => $validatedData['notes'],
+            'status' => 'Draft',
         ]);
 
         //return redirect()->back()->with('success', 'Unos uspješno ažuriran!');
