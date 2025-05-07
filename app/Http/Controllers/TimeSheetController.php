@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Timesheet;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class TimesheetController extends Controller
@@ -47,7 +49,93 @@ class TimesheetController extends Controller
         return response()->json($summary);
     }
 
+    public function submitMonth(Request $request)
+    {
+        $this->authorize('submit-timesheets');
 
+        $validated = $request->validate([
+            'month' => 'required|date_format:Y-m',
+        ]);
+    
+        $currentUser = Auth::user();
+        $monthCarbon = Carbon::parse($validated['month']);
+    
+        // Provjera da li je mjesec završen
+        if ($monthCarbon->endOfMonth()->isFuture()) {
+            return redirect()->back()->with('error', 'Ne možete predati unose za mjesec koji još nije završen.');
+        }
+    
+        $startOfMonth = $monthCarbon->copy()->startOfMonth();
+        $endOfMonth = $monthCarbon->copy()->endOfMonth();
+    
+        $entriesToSubmit = Timesheet::where('user_id', $currentUser->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Draft')
+            ->orWhere('status', 'Rejected')
+            ->get();
+    
+        if ($entriesToSubmit->isEmpty()) {
+            return redirect()->route('timesheets.index')->with('error', 'Nema radnih unosa u statusu "Draft" ili "Rejected" za predaju za odabrani mjesec.');
+        }
+    
+        $updatedCount = Timesheet::where('user_id', $currentUser->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'Draft')
+            ->orWhere('status', 'Rejected')
+            ->update(['status' => 'Submitted']);
+    
+        if ($updatedCount > 0) {
+            $managers = User::whereHas('roles', function ($query) {
+                $query->where('name', 'manager');
+            })->get();
+   
+            // --- Logika Notifikacija --- FALI
+    
+            return redirect()->route('timesheets.index', ['month' => $validated['month']])->with('success', 'Unosi za ' . $monthCarbon->format('F Y') . ' su uspješno predati na odobrenje.');
+        } else {
+            return redirect()->route('timesheets.index', ['month' => $validated['month']])->with('error', 'Nije bilo unosa za predaju.');
+        }
+    }
+
+    public function approveTimesheetEntry(Request $request, Timesheet $timesheet)
+    {
+        $this->authorize('approve-timesheets');
+
+        if ($timesheet->status !== 'Submitted') {
+            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
+        }
+
+        $timesheet->update([
+            'status' => 'Approved',
+            'rejection_reason' => null, //ako je prethodno bio odbijen, reset sada
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odobren.");
+    }
+
+    public function rejectTimesheetEntry(Request $request, Timesheet $timesheet)
+    {
+        $this->authorize('reject-timesheets');
+
+        if ($timesheet->status !== 'Submitted') {
+            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
+        }
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|min:4|max:500',
+        ]);
+        $timesheet->update([
+            'status' => 'Rejected',
+            'rejection_reason' => $validated['rejection_reason'],
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odbijen.");
+    }
+
+    
 
     private function getUserProjects($user)
     {
@@ -125,7 +213,7 @@ class TimesheetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request) //ne stavljamo status - draft (jer je to migracijom defaultno)
     {
         $this->authorize('create-timesheet');
         $currentUser = Auth::user();
@@ -198,7 +286,8 @@ class TimesheetController extends Controller
             'date' => $validated['date'],
         ]);
 
-        return redirect()->back()->with('success', 'Timesheet spašen!');
+        //return redirect()->back()->with('success', 'Timesheet spašen!');
+        return redirect()->route('timesheets.index')->with('success', 'Radni unos uspješno dodat.');
     }
 
     /**
@@ -230,6 +319,10 @@ class TimesheetController extends Controller
             abort(403);
         }
 
+        if ($timesheet->status == 'Approved') {
+            return redirect()->route('timesheets.index')->with('error', 'Ne možeš ažurirati timesheete koji su već odobreni!');
+        }
+
         $validatedData = $request->validate([
             'date' => 'required|date_format:Y-m-d',
             'project_id' => 'required|exists:projects,id',
@@ -238,6 +331,16 @@ class TimesheetController extends Controller
             'break_start' => 'nullable',
             'break_end' => 'nullable|after:break_start',
             'notes' => 'nullable|string|max:500|min:4'
+        ],[
+            'date.required' => 'Datum je obavezan.',
+            'project_id.required' => 'Projekt je obavezan.',
+            'start_time.required' => 'Vrijeme početka rada je obavezno.',
+            'end_time.required' => 'Vrijeme završetka rada je obavezno.',
+            'end_time.after' => 'Vrijeme završetka mora biti nakon vremena početka.',
+            'break_start.after' => 'Vrijeme početka pauze mora biti nakon vremena početka.',
+            'break_end.after' => 'Vrijeme završetka pauze mora biti nakon vremena početka pauze.',
+            'notes.max' => 'Napomena može sadržavati najviše 500 znakova.',
+            'notes.min' => 'Napomena mora sadržavati najmanje 4 znaka.', 
         ]);
 
         $timesheet->update([
@@ -248,9 +351,11 @@ class TimesheetController extends Controller
             'break_start' => $validatedData['break_start'],
             'break_end' => $validatedData['break_end'],
             'notes' => $validatedData['notes'],
+            'status' => 'Draft',
         ]);
 
-        return redirect()->back()->with('success', 'Unos uspješno ažuriran!');
+        //return redirect()->back()->with('success', 'Unos uspješno ažuriran!');
+        return redirect()->route('timesheets.index')->with('success', 'Unos uspješno ažuriran!');
     }
 
 
@@ -265,6 +370,7 @@ class TimesheetController extends Controller
         }
 
         $timesheet->delete();
-        return redirect()->back()->with('success', 'Unos uspješno obrisan!');
+        //return redirect()->back()->with('success', 'Unos uspješno obrisan!');
+        return redirect()->route('timesheets.index')->with('success', 'Unos uspješno obrisan!');
     }
 }

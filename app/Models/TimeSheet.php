@@ -21,7 +21,9 @@ class Timesheet extends Model
         'notes',
         'project_id',
         'user_id',
-        'date'
+        'date',
+        'status',
+        'rejection_reason',
     ];
 
     public function project(): BelongsTo

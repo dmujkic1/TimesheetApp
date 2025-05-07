@@ -1,9 +1,25 @@
 <template>
   <div class="min-h-screen bg-gray-100" style="background-image: url('/pozadina.jpg');">
     <Navbar />
+
+    <!-- Flash poruke -->
+    <div v-if="props?.flash?.error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4 mx-auto max-w-4xl">
+      {{ props.flash.error }}
+    </div>
+    <div v-if="props?.flash?.success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4 mx-auto max-w-4xl">
+      {{ props.flash.success }}
+    </div>
+
     <div class="max-w-6xl mx-auto py-10 px-4">
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-bold text-white">Timesheet Management</h1>
+        <button
+          v-if="canSubmitMonth"
+          @click="submitSelectedMonth"
+          type="button"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow-md transition duration-150 ease-in-out">
+          Predaj {{ dayjs(selectedMonth).format('MMMM') }}
+      </button>
         <select v-model="selectedMonth" @change="loadTimesheets" class="bg-white border rounded px-3 py-1 text-black">
           <option v-for="month in months" :value="month.value" :key="month.value">
             {{ month.label }}
@@ -94,8 +110,14 @@ import SidebarTimesheet from '@/components/SidebarTimesheet.vue'
 import { ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import axios from 'axios';
+import { computed } from 'vue'
 
 const dailyWork = ref({});
+
+/* const allSubmitted = computed(() => {
+  return Object.values(dailyWork.value).every(entry => entry.status !== 'Draft');
+}); */
+
 
 const getExpectedTimeForDate = (dateStr) => {
   //Vikend
@@ -126,6 +148,7 @@ onMounted(async () => {
 
 const props = defineProps({
   projects: Array,
+  flash: Object,
 })
 
 const selectedMonth = ref(dayjs().format('YYYY-MM'))
@@ -196,6 +219,44 @@ const openSidebar = (date) => {
     }
   });
 }
+
+/* const submitDraft = () => {
+  router.post(route('timesheets.draft'), { month: selectedMonth.value }, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: (page) => {
+      loadTimesheets()
+    }
+  })
+} */
+
+const canSubmitMonth = computed(() => {
+  if (!selectedMonth.value) return false;
+  const monthToCheck = dayjs(selectedMonth.value).endOf('month');
+  const today = dayjs();
+  const isMonthFinished = monthToCheck.isBefore(today, 'day');
+
+  return isMonthFinished;
+});
+
+const submitSelectedMonth = () => {
+  if (!canSubmitMonth.value) {
+    alert("Predaja za ovaj mjesec još nije moguća");
+    return;
+  }
+  if (confirm(`Jeste li sigurni da želite predati sve unose za ${dayjs(selectedMonth.value).format('MMMM')} na odobrenje?`)) {
+    router.post(route('timesheets.submitMonth'), { month: selectedMonth.value }, {
+      preserveScroll: true,
+      onSuccess: (page) => {
+        loadDailySummary();
+      },
+      onError: (errors) => {
+        console.error("Greška pri predaji mjeseca:", errors);
+        alert(`Greška: ${errors.month}`);
+      }
+    });
+  }
+};
 
 const handleSaved = () => {
   loadTimesheets()
