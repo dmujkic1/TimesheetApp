@@ -22,11 +22,33 @@
             </div>
           </div>
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
-              <span class="absolute -inset-1.5" />
-              <span class="sr-only">View notifications</span>
-              <BellIcon class="size-6" aria-hidden="true" />
-            </button>
+            <Menu as="div" class="relative ml-3">
+                 <MenuButton class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
+                   <span class="absolute -inset-1.5" />
+                   <span class="sr-only">View notifications</span>
+                   <BellIcon class="size-6" aria-hidden="true" />
+                 </MenuButton>
+               
+                 <transition
+                   enter-active-class="transition ease-out duration-100"
+                   enter-from-class="transform opacity-0 scale-95"
+                   enter-to-class="transform opacity-100 scale-100"
+                   leave-active-class="transition ease-in duration-75"
+                   leave-from-class="transform opacity-100 scale-100"
+                   leave-to-class="transform opacity-0 scale-95"
+                 >
+                <MenuItems class="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-hidden max-h-96 overflow-auto">
+                  <MenuItem v-for="(notification, index) in notifications" :key="index" v-slot="{ active }">
+                    <div :class="[active ? 'bg-gray-100' : '', 'px-4 py-2 text-sm text-gray-700 cursor-pointer']">
+                      <p class="font-semibold">{{ notification.title }}</p>
+                      <p class="text-xs text-gray-500">{{ notification.message }}</p>
+                    </div>
+                  </MenuItem>
+                  <div v-if="notifications.length === 0" class="px-4 py-2 text-sm text-gray-500">Nema novih obavijesti</div>
+                </MenuItems>
+              </transition>
+            </Menu>
+
   
             <!-- Profile dropdown -->
             <Menu as="div" class="relative ml-3">
@@ -43,7 +65,7 @@
                     <a href="#" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Your Profile</a>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Settings</a>
+                    <a href="http://127.0.0.1:8000/settings/profile" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Settings</a>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
                     <a href="#" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Sign out</a>
@@ -89,4 +111,10 @@ const navigation = [
   { name: 'Projekti', href: '/projects/getAll', current: getCurrentRoute() === 'Projekti' },
   { name: 'Dodjela timovima', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
 ];
+
+const notifications = [
+  { title: 'Nova poruka', message: 'Imate novu poruku od menadžera.' },
+  { title: 'Podsjetnik', message: 'Popunite svoj timesheet do 17:00h.' },
+];
+
   </script>

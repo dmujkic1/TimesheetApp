@@ -18,12 +18,7 @@ interface Props {
 
 defineProps<Props>();
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Profile settings',
-        href: '/settings/profile',
-    },
-];
+
 
 const page = usePage<SharedData>();
 const user = page.props.auth.user as User;
@@ -41,8 +36,8 @@ const submit = () => {
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <Head title="Profile settings" />
+    <AppLayout>
+   
 
         <SettingsLayout>
             <div class="flex flex-col space-y-6">
