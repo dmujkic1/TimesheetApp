@@ -71,7 +71,7 @@ class TimesheetController extends Controller
         $entriesToSubmit = Timesheet::where('user_id', $currentUser->id)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->where('status', 'Draft')
-            ->orWhere('status', '!=', 'Rejected')
+            ->orWhere('status', 'Rejected')
             ->get();
     
         if ($entriesToSubmit->isEmpty()) {
