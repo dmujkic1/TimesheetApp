@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\OOO;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class OOOController extends Controller
 {
@@ -12,7 +15,13 @@ class OOOController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('create-ooo-requests');
+        $ulogovaniUser = User::where('id', Auth::user()->id)->first();
+        $oooRequests = $ulogovaniUser->ooo()->get();
+
+        return Inertia::render('web/timesheets/Index', [
+            'oooRequests' => $oooRequests,
+        ]);
     }
 
     /**
@@ -28,7 +37,22 @@ class OOOController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create-ooo-request');
+        $validated = $request->validate([
+            'type' => 'required|in:Godišnji odmor,Vjerski praznik,Bolovanje,Privatni dani',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'notes' => 'nullable|string',
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $ulogovaniUser = User::where('id', Auth::user()->id)->first();
+        $ulogovaniUser->ooo()->create([
+            ...$validated,
+            'status' => 'Pending'
+        ]);
+
+        return redirect()->route('timesheets.index')->with('success', 'OOO zahtjev uspješno poslan!');
     }
 
     /**
