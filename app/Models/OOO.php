@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OOO extends Model
 {
+    protected $table = 'ooo';
     /**
      * The attributes that are mass assignable.
      *
