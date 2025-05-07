@@ -65,8 +65,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('manager/timesheets')->name('manager.timesheets.')->group(function () {
         Route::get('/pending-approvals', [ManagerTimesheetController::class, 'index'])->name('pending');
-        Route::patch('/approve/{timesheet}', [TimesheetController::class, 'approveTimesheetEntry'])->name('approveEntry');
-        Route::patch('/reject/{timesheet}', [TimesheetController::class, 'rejectTimesheetEntry'])->name('rejectEntry');
+        Route::patch('/approve/{timesheet}', [ManagerTimesheetController::class, 'approveTimesheetEntry'])->name('approveEntry');
+        Route::patch('/reject/{timesheet}', [ManagerTimesheetController::class, 'rejectTimesheetEntry'])->name('rejectEntry');
     });
 
     //Fallback/Catchall Route

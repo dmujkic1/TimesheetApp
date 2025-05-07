@@ -97,45 +97,6 @@ class TimesheetController extends Controller
         }
     }
 
-    public function approveTimesheetEntry(Request $request, Timesheet $timesheet)
-    {
-        $this->authorize('approve-timesheets');
-
-        if ($timesheet->status !== 'Submitted') {
-            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
-        }
-
-        $timesheet->update([
-            'status' => 'Approved',
-            'rejection_reason' => null, //ako je prethodno bio odbijen, reset sada
-        ]);
-
-        // Notifikacija korisniku?
-
-        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odobren.");
-    }
-
-    public function rejectTimesheetEntry(Request $request, Timesheet $timesheet)
-    {
-        $this->authorize('reject-timesheets');
-
-        if ($timesheet->status !== 'Submitted') {
-            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
-        }
-        $validated = $request->validate([
-            'rejection_reason' => 'required|string|min:4|max:500',
-        ]);
-        $timesheet->update([
-            'status' => 'Rejected',
-            'rejection_reason' => $validated['rejection_reason'],
-        ]);
-
-        // Notifikacija korisniku?
-
-        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odbijen.");
-    }
-
-    
 
     private function getUserProjects($user)
     {
