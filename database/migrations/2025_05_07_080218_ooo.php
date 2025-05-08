@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\OOO;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('ooo', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['Godišnji odmor', 'Vjerski praznik', 'Bolovanje', 'Privatni dani']);
+            $table->enum('type', OOO::TYPESENUM);
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->text('notes')->nullable();

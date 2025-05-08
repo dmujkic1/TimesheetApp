@@ -6,6 +6,7 @@ use App\Models\OOO;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class OOOController extends Controller
@@ -39,7 +40,7 @@ class OOOController extends Controller
     {
         $this->authorize('create-ooo-request');
         $validated = $request->validate([
-            'type' => 'required|in:Godišnji odmor,Vjerski praznik,Bolovanje,Privatni dani',
+            'type' => ['required', Rule::in(OOO::TYPESENUM)],
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'notes' => 'nullable|string',

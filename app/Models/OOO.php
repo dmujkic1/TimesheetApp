@@ -23,6 +23,8 @@ class OOO extends Model
         'status'
     ];
 
+    const TYPESENUM = ['Annual_leave', 'Religious_holiday', 'Sick_leave', 'Private'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
