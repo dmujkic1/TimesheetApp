@@ -56,7 +56,7 @@
                 <MenuButton class="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
                   <span class="absolute -inset-1.5" />
                   <span class="sr-only">Open user menu</span>
-                  <img class="size-10 rounded-full" src="https://media.discordapp.net/attachments/691624368005972058/1361545418378580079/9993686b0da81d6c49520c19eaf13c72.png?ex=67ff257c&is=67fdd3fc&hm=b26a0987447356cd38766eff7caa0c9e58b172cdbda456a28d519e1d5fbe7b77&=&format=webp&quality=lossless&width=940&height=940" alt="" />
+                  <img class="size-10 rounded-full" src="" alt="" />
                 </MenuButton>
               </div>
               <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
@@ -100,6 +100,12 @@ const getCurrentRoute = () => {
     return 'Projekti';
   } else if (pathname.includes('teams/assign')) {
     return 'Dodjela timu';
+  } else if (pathname.includes('manager/timesheets/pending-approvals')) {
+    return 'Timesheets na provjeri';
+  } else if (pathname.includes('timesheets')) {
+    return 'Timesheets';
+  } else if (pathname.includes('manager/timesheets/pending-approvals')) {
+    return 'Timesheets na provjeri';
   } else {
     return '';
   }
@@ -109,7 +115,9 @@ const navigation = [
   { name: 'Zaposlenici', href: '/employees/getAll', current: getCurrentRoute() === 'Zaposlenici' },
   { name: 'Menadžeri', href: '/managers/getAll', current: getCurrentRoute() === 'Menadžeri' },
   { name: 'Projekti', href: '/projects/getAll', current: getCurrentRoute() === 'Projekti' },
-  { name: 'Dodjela timovima', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
+  { name: 'Dodjela timu', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
+  { name: 'Timesheets', href: '/timesheets', current: getCurrentRoute() === 'Timesheets' },
+  { name: 'Timesheets na provjeri', href: '/manager/timesheets/pending-approvals', current: getCurrentRoute() === 'Timesheets na provjeri' },
 ];
 
 const notifications = [

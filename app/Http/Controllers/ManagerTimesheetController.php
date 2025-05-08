@@ -1,0 +1,116 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Timesheet;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class ManagerTimesheetController extends Controller
+{
+    public function approveTimesheetEntry(Request $request, Timesheet $timesheet)
+    {
+        $this->authorize('approve-timesheets');
+
+        if ($timesheet->status !== 'Submitted') {
+            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
+        }
+
+        $timesheet->update([
+            'status' => 'Approved',
+            'rejection_reason' => null, //ako je prethodno bio odbijen, reset sada
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odobren.");
+    }
+
+    public function rejectTimesheetEntry(Request $request, Timesheet $timesheet)
+    {
+        $this->authorize('reject-timesheets');
+
+        if ($timesheet->status !== 'Submitted') {
+            return redirect()->route('manager.timesheets.pending')->with('error', 'Unos nije u statusu "Submitted".');
+        }
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|min:4|max:500',
+        ]);
+        $timesheet->update([
+            'status' => 'Rejected',
+            'rejection_reason' => $validated['rejection_reason'],
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.timesheets.pending')->with('success', "Unos za korisnika {$timesheet->user->name} na dan {$timesheet->date} je odbijen.");
+    }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $this->authorize('view-pending-approvals');
+
+        $query = Timesheet::with(['user:id,name,email', 'project:id,project_name'])
+            ->where('status', 'Submitted');
+
+        $pendingEntries = $query->orderBy('date', 'asc') //najstariji datum prvo
+                                 ->orderBy('user_id')
+                                 ->paginate(15)
+                                 ->withQueryString();
+
+        return Inertia::render('web/timesheets/PendingApprovals', [
+            'pagination' => $query->paginate(15),
+            'pendingEntries' => $pendingEntries,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}

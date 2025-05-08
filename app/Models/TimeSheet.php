@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TimeSheet extends Model
+class Timesheet extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -21,6 +21,9 @@ class TimeSheet extends Model
         'notes',
         'project_id',
         'user_id',
+        'date',
+        'status',
+        'rejection_reason',
     ];
 
     public function project(): BelongsTo
