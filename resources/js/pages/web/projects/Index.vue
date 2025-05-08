@@ -12,7 +12,7 @@
 
     <!-- Header Section -->
     <!-- Lista Projekata Header -->
-    <div class="w-full max-w-6xl mx-auto px-4 mt-10">
+    <div class="w-full max-w-8xl mx-auto px-4 mt-10">
       <div class="flex items-center justify-between bg-black/60 backdrop-blur-md rounded-xl shadow-lg px-6 py-5">
         <h1 class="text-3xl font-bold text-white">📂 Lista Projekata</h1>
         <Link
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Tabela Projekata -->
-    <div class="w-full max-w-6xl mx-auto px-4 mt-6">
+    <div class="w-full max-w-8xl mx-auto px-4 mt-6">
       <div class="bg-black/50 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden">
         <table class="w-full text-white text-left text-sm">
           <thead class="bg-purple-900/80 text-white uppercase text-xs tracking-wider">
@@ -38,7 +38,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="project in projects"
+              v-for="project in projects.data"
               :key="project.id"
               class="border-t border-white/10 hover:bg-purple-700/60 transition-all"
             >
@@ -70,6 +70,25 @@
         </table>
       </div>
     </div>
+        <!-- Pagination Controls -->
+    <div class="w-full max-w-8xl mx-auto px-4 mt-4 flex justify-center">
+      <nav class="inline-flex gap-1">
+        <Link
+          v-for="(link, index) in projects.links"
+          :key="index"
+          :href="link.url"
+          :class="[
+            'px-4 py-2 rounded-md text-sm font-medium',
+            link.active ? 'bg-purple-700 text-white' : 'bg-purple-900 hover:bg-purple-800 text-gray-200',
+            !link.url && 'opacity-50 pointer-events-none',
+          ]"
+        >
+          <template v-if="link.label.includes('Previous')"><- Prethodna</template>
+          <template v-else-if="link.label.includes('Next')">Sljedeća -></template>
+          <template v-else>{{ link.label }}</template>
+        </Link>
+      </nav>
+    </div>
 
 
     <!-- Delete Confirmation Modal -->
@@ -96,7 +115,7 @@ import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
 
 const props = defineProps({
-  projects: Array,
+  projects: Object,
   flash: Object,
 });
 
