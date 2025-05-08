@@ -12,60 +12,65 @@
     </div>
 
     <!-- Naslov i dugme -->
-    <div class="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-white">📋 Lista uposlenika</h1>
-      <Link href="/employees/add" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow">
+    <div class="w-full max-w-6xl mx-auto px-4 mt-10">
+      <div class="flex items-center justify-between bg-black/60 backdrop-blur-md rounded-xl shadow-lg px-6 py-5">
+        <h1 class="text-3xl font-bold text-white">📂 Lista uposlenika</h1>
+        <Link href="/employees/add" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow">
         ➕ Dodaj zaposlenika
-      </Link>
+        </Link>
+      </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-      <input
-        v-model="search"
-        @keydown.enter="searchEmployees"
-        type="text"
-        placeholder="Pretraži po imenu..."
-        class="bg-white text-gray-800 border border-gray-300 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-purple-400"
-      />
-      <button
-        @click="searchEmployees"
-        class="ml-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow"
-      >
-        Pretraži
-      </button>
+    <div class="w-full max-w-6xl mx-auto px-4 mt-10">
+      <div class="flex items-center justify-between bg-black/60 backdrop-blur-md rounded-xl shadow-lg px-6 py-4">
+        <input  
+          v-model="search"
+          @keydown.enter="searchEmployees"
+          type="text"
+          placeholder="Pretraži po imenu..."
+          class="bg-white text-gray-800 border border-gray-300 rounded px-9 py-2 w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+        />
+        <button
+          @click="searchEmployees"
+          class="ml-2 bg-purple-600 hover:bg-purple-700 text-white px-4 h-11 py-2 rounded-md shadow"
+        >
+        🔍
+        </button>
+      </div>  
     </div>
 
 
     <!-- Tabela -->
-    <div class="overflow-x-auto max-w-6xl mx-auto px-4">
-      <table class="w-full bg-white shadow rounded-lg overflow-hidden border border-purple-200">
-        <thead class="bg-purple-100 text-purple-900 text-sm font-semibold">
-          <tr>
-            <th class="px-5 py-3 text-left">#</th>
-            <th class="px-5 py-3 text-left">Ime</th>
-            <th class="px-5 py-3 text-left">Prezime</th>
-            <th class="px-5 py-3 text-left">Email</th>
-            <th class="px-5 py-3 text-center">Akcije</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="employee in pagination.data" :key="employee.id"
-              class="border-t hover:bg-purple-50 transition">
-            <td class="px-5 py-3">{{ employee?.id }}</td>
-            <td class="px-5 py-3">{{ employee?.first_name ?? "Nepoznato ime" }}</td>
-            <td class="px-5 py-3">{{ employee?.last_name ?? "Nepoznato prezime" }}</td>
-            <td class="px-5 py-3">{{ employee?.email ?? "Nepoznat email" }}</td>
-            <td class="px-5 py-3 text-center">
-              <div class="flex justify-center gap-3 text-sm">
-                <Link :href="`/employees/edit/${employee.id}`" class="text-purple-600 hover:underline">✏️ Uredi</Link>
-                <Link :href="`/employees/get/${employee.id}`" class="text-green-600 hover:underline">🔍 Detalji</Link>
-                <button @click="confirmDelete(employee.id)" class="text-red-600 hover:underline">🗑️ Obriši</button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
+    <div class="w-full max-w-6xl mx-auto px-4 mt-6">
+      <div class="bg-black/50 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden">
+        <table class="w-full text-white text-left text-sm">
+          <thead class="bg-purple-900/80 text-white uppercase text-xs tracking-wider">
+            <tr>
+              <th class="px-6 py-4 text-left">#</th>
+              <th class="px-6 py-4 text-left">Ime</th>
+              <th class="px-6 py-4 text-left">Prezime</th>
+              <th class="px-6 py-4 text-left">Email</th>
+              <th class="px-6 py-4 text-center">Akcije</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="employee in pagination.data" :key="employee.id"
+                class="border-t border-white/10 hover:bg-purple-700/60 transition-all">
+              <td class="px-5 py-3">{{ employee?.id }}</td>
+              <td class="px-5 py-3">{{ employee?.first_name ?? "Nepoznato ime" }}</td>
+              <td class="px-5 py-3">{{ employee?.last_name ?? "Nepoznato prezime" }}</td>
+              <td class="px-5 py-3">{{ employee?.email ?? "Nepoznat email" }}</td>
+              <td class="px-5 py-3 text-center">
+                <div class="flex justify-center gap-3 text-sm">
+                  <Link :href="`/employees/edit/${employee.id}`" class="text-purple-600 hover:underline">✏️ </Link>
+                  <Link :href="`/employees/get/${employee.id}`" class="text-green-600 hover:underline">🔍 </Link>
+                  <button @click="confirmDelete(employee.id)" class="text-red-600 hover:underline">🗑️ </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <!-- Navigacija kroz paginaciju -->
       <PaginationNavigation
         :pagination="pagination"
