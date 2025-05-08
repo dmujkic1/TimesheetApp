@@ -42,6 +42,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'approve-timesheets']);
         Permission::create(['name' => 'reject-timesheets']);
         Permission::create(['name' => 'view-pending-approvals']);
+        Permission::create(['name' => 'create-ooo-request']);
         
         
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)

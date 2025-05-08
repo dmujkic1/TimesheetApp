@@ -19,7 +19,13 @@
           type="button"
           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow-md transition duration-150 ease-in-out">
           Predaj {{ dayjs(selectedMonth).format('MMMM') }}
-      </button>
+        </button>
+        <button
+          @click="showModal = true"
+          type="button"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm shadow-md transition duration-150 ease-in-out ml-2">
+          Zatraži OOO vrijeme
+        </button>
         <select v-model="selectedMonth" @change="loadTimesheets" class="bg-white border rounded px-3 py-1 text-black">
           <option v-for="month in months" :value="month.value" :key="month.value">
             {{ month.label }}
@@ -39,8 +45,9 @@
       <div class="grid grid-cols-7 gap-2">
         <div v-for="(day, i) in daysInMonth" :key="i" @click="!day.isEmpty && openSidebar(day.date)"
           class="p-2 h-28 text-black rounded shadow transition cursor-pointer flex flex-col justify-start" :class="{
-            'bg-white': !day.isToday,
-            'hover:bg-purple-50': !day.isEmpty,
+            'bg-white': !day.isToday && !isOOODay(day.date),
+            'bg-gray-200 text-gray-600': isOOODay(day.date),
+            'hover:bg-purple-50': !day.isEmpty && !isOOODay(day.date),
             'opacity-0 pointer-events-none': day.isEmpty,
             'bg-purple-400 border-2': day.isToday
           }">
@@ -49,8 +56,8 @@
             <div class="font-bold text-sm">{{ parseInt(day.date.split('-')[2]) }}</div>
 
             <!-- Expected: -->
-            <div v-if="isWeekday(day.date)" class="text-xs text-gray-500">Expected: {{
-              getExpectedTimeForDate(day.date).label }}</div>
+            <div v-if="isOOODay(day.date)" class="text-xs text-red-500">Expected: 0h (OOO)</div>
+            <div v-if="isWeekday(day.date)" class="text-xs text-gray-500">Expected: {{getExpectedTimeForDate(day.date).label }}</div>
             <div v-else class="text-xs text-gray-500">Expected: {{ getExpectedTimeForDate(day.date).label }}</div>
 
             <!-- Radni sati -->
@@ -97,6 +104,49 @@
     @saved="handleSaved"
     @deleted="handleSaved" />
   </div>
+  <Modal v-if="showModal" @close="showModal = false">
+  <template #header>
+    <h2 class="text-lg font-semibold">Zatraži OOO vrijeme</h2>
+  </template>
+
+  <template #body>
+    <form @submit.prevent="submitOOORequest" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Tip vremena</label>
+        <select v-model="oooForm.type" class="mt-1 block w-full rounded border-gray-300 text-black">
+          <option disabled value="">-- Odaberite --</option>
+          <option value="Godišnji odmor">Godišnji odmor</option>
+          <option value="Vjerski praznik">Vjerski praznik</option>
+          <option value="Bolovanje">Bolovanje</option>
+          <option value="Privatni dani">Privatni dani</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Datum početka</label>
+        <input v-model="oooForm.start_date" type="date" class="mt-1 block w-full rounded border-gray-300 text-black" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Datum završetka</label>
+        <input v-model="oooForm.end_date" type="date" class="mt-1 block w-full rounded border-gray-300 text-black" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Napomena</label>
+        <textarea v-model="oooForm.notes" class="mt-1 block w-full rounded border-black text-black"></textarea>
+      </div>
+    </form>
+  </template>
+
+  <template #footer>
+    <button @click="submitOOORequest" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+      Pošalji zahtjev
+    </button>
+    <button @click="showModal = false" class="ml-2 px-4 py-2 border rounded bg-red-600 hover:bg-red-700">Otkaži</button>
+  </template>
+</Modal>
+
   <div class="h-24">
     <Footer />
   </div>
@@ -104,8 +154,9 @@
 
 <script setup>
 import Navbar from '@/components/Navbar.vue'
-import { router } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import Footer from '@/components/Footer.vue'
+import Modal from '@/components/Modal.vue'
 import SidebarTimesheet from '@/components/SidebarTimesheet.vue'
 import { ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
@@ -113,6 +164,15 @@ import axios from 'axios';
 import { computed } from 'vue'
 
 const dailyWork = ref({});
+const showModal = ref(false);
+const page = usePage();
+const oooForm = ref({
+  type: '',
+  start_date: '',
+  end_date: '',
+  notes: '',
+  user_id: page.props.auth.user.id,
+});
 
 /* const allSubmitted = computed(() => {
   return Object.values(dailyWork.value).every(entry => entry.status !== 'Draft');
@@ -149,7 +209,49 @@ onMounted(async () => {
 const props = defineProps({
   projects: Array,
   flash: Object,
+  oooRequests: Array,
 })
+
+// Pomoćna funkcija koja generiše sve datume između dva datuma (start do end)
+function getDateRange(startDate, endDate) {
+  const dates = [];
+  let current = new Date(startDate);
+  const end = new Date(endDate);
+
+  while (current <= end) {
+    dates.push(current.toISOString().split('T')[0]); // yyyy-mm-dd
+    current.setDate(current.getDate() + 1);
+  }
+  return dates;
+}
+
+const oooDays = computed(() => {
+  const allDates = [];
+  props.oooRequests?.value.forEach(req => {
+    allDates.push(...getDateRange(req.start_date, req.end_date));
+  })
+  return allDates;
+});
+
+function isOOODay(date) {
+  return oooDays.value.includes(date);
+}
+
+const submitOOORequest = () => {
+  router.post(route('ooo.store'), oooForm.value, {
+    onSuccess: () => {
+      showModal.value = false
+      oooForm.value = {
+        type: '',
+        start_date: '',
+        end_date: '',
+        notes: '',
+        user_id: usePage().props.auth.user.id,
+      }
+    }
+  })
+}
+
 
 const selectedMonth = ref(dayjs().format('YYYY-MM'))
 const daysInMonth = ref([])

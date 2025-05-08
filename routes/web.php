@@ -3,6 +3,7 @@
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ManagerTimesheetController;
+use App\Http\Controllers\OOOController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimeSheetController;
@@ -65,8 +66,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('manager/timesheets')->name('manager.timesheets.')->group(function () {
         Route::get('/pending-approvals', [ManagerTimesheetController::class, 'index'])->name('pending');
-        Route::patch('/approve/{timesheet}', [TimesheetController::class, 'approveTimesheetEntry'])->name('approveEntry');
-        Route::patch('/reject/{timesheet}', [TimesheetController::class, 'rejectTimesheetEntry'])->name('rejectEntry');
+        Route::patch('/approve/{timesheet}', [ManagerTimesheetController::class, 'approveTimesheetEntry'])->name('approveEntry');
+        Route::patch('/reject/{timesheet}', [ManagerTimesheetController::class, 'rejectTimesheetEntry'])->name('rejectEntry');
+    });
+
+    Route::prefix('ooo')->group(function () {
+        Route::get('/', [OOOController::class, 'index'])->name('ooo.index');
+        Route::post('/store', [OOOController::class, 'store'])->name('ooo.store');
     });
 
     //Fallback/Catchall Route
