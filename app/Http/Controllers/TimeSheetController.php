@@ -113,9 +113,10 @@ class TimesheetController extends Controller
     public function index(Request $request)
     {
         $this->authorize('view-timesheets');
-        $currentUser = Auth::user();
+        $currentUser = User::where('id', Auth::user()->id)->first();
         $teams = $currentUser->employee->team;
         $projects = $this->getUserProjects($currentUser);
+        $oooRequests = $currentUser->ooo()->get();
 
         //dd($projects);
         
@@ -126,7 +127,9 @@ class TimesheetController extends Controller
 
         return Inertia::render('web/timesheets/Index', [
             'projects' => $projects,
+            'oooRequests' => $oooRequests,
         ]);
+        
     }
 
     

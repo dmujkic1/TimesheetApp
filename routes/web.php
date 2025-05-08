@@ -71,7 +71,6 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('ooo')->group(function () {
-        Route::get('/', [OOOController::class, 'index'])->name('ooo.index');
         Route::post('/store', [OOOController::class, 'store'])->name('ooo.store');
     });
 
