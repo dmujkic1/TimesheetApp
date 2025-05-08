@@ -46,7 +46,7 @@
         <div v-for="(day, i) in daysInMonth" :key="i" @click="!day.isEmpty && openSidebar(day.date)"
           class="p-2 h-28 text-black rounded shadow transition cursor-pointer flex flex-col justify-start" :class="{
             'bg-white': !day.isToday && !isOOODay(day.date),
-            'bg-gray-200 text-gray-600': isOOODay(day.date),
+            'bg-blue-100 text-gray-600': isOOODay(day.date),
             'hover:bg-purple-50': !day.isEmpty && !isOOODay(day.date),
             'opacity-0 pointer-events-none': day.isEmpty,
             'bg-purple-400 border-2': day.isToday
@@ -56,8 +56,8 @@
             <div class="font-bold text-sm">{{ parseInt(day.date.split('-')[2]) }}</div>
 
             <!-- Expected: -->
-            <div v-if="isOOODay(day.date)" class="text-xs text-red-500">Expected: 0h (OOO)</div>
-            <div v-if="isWeekday(day.date)" class="text-xs text-gray-500">Expected: {{getExpectedTimeForDate(day.date).label }}</div>
+            <div v-if="isOOODay(day.date)" class="text-xs text-red-500">Expected: {{getExpectedTimeForDate(day.date).label }}</div>
+            <div v-else-if="isWeekday(day.date)" class="text-xs text-gray-500">Expected: {{getExpectedTimeForDate(day.date).label }}</div>
             <div v-else class="text-xs text-gray-500">Expected: {{ getExpectedTimeForDate(day.date).label }}</div>
 
             <!-- Radni sati -->
@@ -115,10 +115,10 @@
         <label class="block text-sm font-medium text-gray-700">Tip vremena</label>
         <select v-model="oooForm.type" class="mt-1 block w-full rounded border-gray-300 text-black">
           <option disabled value="">-- Odaberite --</option>
-          <option value="Godišnji odmor">Godišnji odmor</option>
-          <option value="Vjerski praznik">Vjerski praznik</option>
-          <option value="Bolovanje">Bolovanje</option>
-          <option value="Privatni dani">Privatni dani</option>
+          <option value="Annual_leave">Godišnji odmor</option>
+          <option value="Religious_holiday">Vjerski praznik</option>
+          <option value="Sick_leave">Bolovanje</option>
+          <option value="Private">Privatni dani</option>
         </select>
       </div>
 
@@ -163,6 +163,13 @@ import dayjs from 'dayjs'
 import axios from 'axios';
 import { computed } from 'vue'
 
+const props = defineProps({
+  projects: Array,
+  flash: Object,
+  oooRequests: Array,
+})
+
+
 const dailyWork = ref({});
 const showModal = ref(false);
 const page = usePage();
@@ -178,8 +185,25 @@ const oooForm = ref({
   return Object.values(dailyWork.value).every(entry => entry.status !== 'Draft');
 }); */
 
+const oooDays = computed(() => {
+  const allDates = [];
+  props?.oooRequests.forEach(req => {
+    allDates.push(...getDateRange(req.start_date, req.end_date));
+  })
+  return allDates;
+});
+
+function isOOODay(date) {
+  return oooDays.value.includes(date);
+}
 
 const getExpectedTimeForDate = (dateStr) => {
+  if (isOOODay(dateStr)) {
+    return {
+      label: '0h (OOO)',
+      minutes: 0
+    }
+  }
   //Vikend
   if (dayjs(dateStr).day() === 0 || dayjs(dateStr).day() === 6) {
     return {
@@ -206,17 +230,13 @@ onMounted(async () => {
   dailyWork.value = response.data;
 });
 
-const props = defineProps({
-  projects: Array,
-  flash: Object,
-  oooRequests: Array,
-})
-
 // Pomoćna funkcija koja generiše sve datume između dva datuma (start do end)
 function getDateRange(startDate, endDate) {
   const dates = [];
   let current = new Date(startDate);
+  current.setDate(current.getDate() + 1);
   const end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
 
   while (current <= end) {
     dates.push(current.toISOString().split('T')[0]); // yyyy-mm-dd
@@ -225,17 +245,6 @@ function getDateRange(startDate, endDate) {
   return dates;
 }
 
-const oooDays = computed(() => {
-  const allDates = [];
-  props.oooRequests?.value.forEach(req => {
-    allDates.push(...getDateRange(req.start_date, req.end_date));
-  })
-  return allDates;
-});
-
-function isOOODay(date) {
-  return oooDays.value.includes(date);
-}
 
 const submitOOORequest = () => {
   router.post(route('ooo.store'), oooForm.value, {

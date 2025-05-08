@@ -16,13 +16,7 @@ class OOOController extends Controller
      */
     public function index()
     {
-        $this->authorize('create-ooo-requests');
-        $ulogovaniUser = User::where('id', Auth::user()->id)->first();
-        $oooRequests = $ulogovaniUser->ooo()->get();
-
-        return Inertia::render('web/timesheets/Index', [
-            'oooRequests' => $oooRequests,
-        ]);
+        
     }
 
     /**
