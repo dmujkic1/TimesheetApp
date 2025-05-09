@@ -92,9 +92,8 @@ class ReportController extends Controller
                 $totalBreakSeconds += $breakSeconds;
             }
 
-            $netWorkSeconds = abs($totalWorkSeconds);
-            $hours = floor($netWorkSeconds / 3600);
-            $minutes = floor(($netWorkSeconds % 3600) / 60);
+            $hours = abs(floor($totalWorkSeconds / 3600));
+            $minutes = abs(floor(($totalWorkSeconds % 3600) / 60));
 
             /* $projectName = $user->employee->team && $user->employee->team->project->isNotEmpty()
             ? $user->employee->team->project->pluck('project_name')->join(', ')
@@ -111,7 +110,6 @@ class ReportController extends Controller
                 'user_id' => $userId,
                 'user_name' => $user->name,
                 'user_project' => $projectName,
-                'total_hours_decimal' => round($netWorkSeconds / 3600, 2),
                 'total_hours_formatted' => sprintf('%dh %02dm', $hours, $minutes),
             ];
         })->sortBy('user_name')->values();
