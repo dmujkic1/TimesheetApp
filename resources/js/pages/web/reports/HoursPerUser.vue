@@ -63,10 +63,17 @@
                     </div>
                 </div>
 
-                 <!-- Dugme za Export (dodat ćemo kasnije) -->
-                 <!-- <div class="mt-6 text-right">
-                     <button @click="exportReport" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Export u CSV</button>
-                 </div> -->
+                 <!-- Dugme za Export -->
+                <div class="mt-6 text-right">
+                    <button @click="exportReport"
+                            :disabled="!reportData || reportData.length === 0"
+                            class="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1 -mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Export u CSV
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -97,7 +104,6 @@ const applyFilters = throttle(() => {
     router.get(route('reporting.hoursPerUser'), pickBy(filterForm), {
         preserveState: true,
         preserveScroll: true,
-        replace: true,
     });
 }, 50);
 
@@ -110,6 +116,19 @@ const resetFilters = () => {
 const getProjectNameById = (id) => {
     const project = props.projects.find(p => p.id === id);
     return project ? project.project_name : 'Nepoznat projekat';
+};
+
+const exportReport = () => {
+    const queryParams = pickBy({
+        month: filterForm.month,
+        project_id: filterForm.project_id,
+    });
+
+    // Generiraj URL za export rutu s query parametrima
+    const exportUrl = route('reporting.hoursPerUser.export', queryParams);
+
+    // Jednostavno preusmjeri preglednik na URL, što će pokrenuti download
+    window.location.href = exportUrl;
 };
 
 </script>
