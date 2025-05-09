@@ -92,8 +92,10 @@ class ReportController extends Controller
                 $totalBreakSeconds += $breakSeconds;
             }
 
-            $hours = abs(floor($totalWorkSeconds / 3600));
-            $minutes = abs(floor(($totalWorkSeconds % 3600) / 60));
+            /* $hours = abs(floor($totalWorkSeconds / 3600));
+            $minutes = abs(floor(($totalWorkSeconds % 3600) / 60)); */
+            $hours = abs(intdiv($totalWorkSeconds, 3600));
+            $minutes = abs(intdiv($totalWorkSeconds % 3600, 60));
 
             /* $projectName = $user->employee->team && $user->employee->team->project->isNotEmpty()
             ? $user->employee->team->project->pluck('project_name')->join(', ')
@@ -113,9 +115,61 @@ class ReportController extends Controller
                 'total_hours_formatted' => sprintf('%dh %02dm', $hours, $minutes),
             ];
         })->sortBy('user_name')->values();
-
         return $report;
     }
+
+    public function getUserProjectBreakdown(Request $request)
+{
+    $validatedFilters = $request->validate([
+        'user_id' => 'required|integer|exists:users,id',
+        'month' => 'sometimes|required|date_format:Y-m',
+    ]);
+
+    $selectedMonth = $validatedFilters['month'] ?? Carbon::now()->subMonthNoOverflow()->format('Y-m');
+    $userId = $validatedFilters['user_id'];
+
+    $startOfMonth = Carbon::parse($selectedMonth)->startOfMonth();
+    $endOfMonth = Carbon::parse($selectedMonth)->endOfMonth();
+
+    $timesheets = Timesheet::with(['project'])
+        ->where('user_id', $userId)
+        ->where('status', 'Approved')
+        ->whereBetween('date', [$startOfMonth, $endOfMonth])
+        ->get();
+
+    $projectSeconds = [];
+
+    foreach ($timesheets as $entry) {
+        $projectName = $entry->project->project_name;
+        $secondsWorked = Carbon::parse($entry->end_time)->diffInSeconds(Carbon::parse($entry->start_time));
+        $secondsWorked = abs($secondsWorked);
+        $secondsOnBreak = 0;
+        if ($entry->break_start && $entry->break_end) {
+            $breakStart = Carbon::parse($entry->break_start);
+            $breakEnd = Carbon::parse($entry->break_end);
+            $secondsOnBreak = abs($breakEnd->diffInSeconds($breakStart));
+        }
+        $secondsWorked -= $secondsOnBreak;
+
+        if (!isset($projectSeconds[$projectName])) {
+            $projectSeconds[$projectName] = 0;
+        }
+
+        $projectSeconds[$projectName] += $secondsWorked;
+    }
+
+    // Formatiraj ukupan broj sekundi u "Xh Ym"
+    $breakdown = [];
+    foreach ($projectSeconds as $projectName => $totalSeconds) {
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $breakdown[$projectName] = sprintf("%dh %02dm", $hours, $minutes);
+    }
+
+    return response()->json($breakdown);
+}
+
+
 
     public function exportHoursPerUser(Request $request)
     {

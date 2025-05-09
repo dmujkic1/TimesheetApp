@@ -78,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('reporting')->group(function () {
         Route::get('/hours-per-user', [ReportController::class, 'hoursPerUser'])->name('reporting.hoursPerUser');
         Route::get('/hours-per-user/export', [ReportController::class, 'exportHoursPerUser'])->name('reporting.hoursPerUser.export');
+        Route::get('/hours-per-project', [ReportController::class, 'getUserProjectBreakdown'])->name('reporting.userProjectBreakdown');
     });
 
     //Fallback/Catchall Route

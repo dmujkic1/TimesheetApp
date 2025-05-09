@@ -51,7 +51,14 @@
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     <tr v-for="item in reportData" :key="item.user_id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ item.user_name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ filterForm.project_id ? getProjectNameById(filterForm.project_id) : item.user_project }}</td>
+                                        <td @click="openBreakdownModal(item)" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                            <span v-if="filterForm.project_id">
+                                                {{ getProjectNameById(filterForm.project_id) }}
+                                            </span>
+                                            <span v-else>
+                                                {{ item.user_project }}
+                                                <span v-if="item.user_project.split(',').length > 1" class="text-blue-500 ml-1 cursor-pointer">🔍</span>
+                                            </span></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.total_hours_formatted }}</td>
                                     </tr>
                                 </tbody>
@@ -77,6 +84,27 @@
             </div>
         </div>
     </div>
+    <!-- MODAL ZA BREAKDOWN PO PROJEKTIMA -->
+<div v-if="selectedUserBreakdown" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md w-full">
+        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Breakdown za: {{ selectedUserBreakdown.user_name }}
+        </h3>
+        <ul>
+            <li v-for="(hours, projectName) in selectedUserBreakdown.projects" :key="projectName"
+                class="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                <strong>{{ projectName }}</strong>: {{ hours }}
+            </li>
+        </ul>
+        <div class="mt-4 text-right">
+            <button @click="selectedUserBreakdown = null"
+                    class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                Zatvori
+            </button>
+        </div>
+    </div>
+</div>
+
         <div class="h-24"><Footer /></div>
 </template>
 
@@ -88,6 +116,7 @@ import Footer from '@/components/Footer.vue';
 import dayjs from 'dayjs';
 import pickBy from 'lodash/pickBy'; //uklanjanje null filtera
 import throttle from 'lodash/throttle'; //prečesti zahtjeva
+import axios from 'axios';
 
 const props = defineProps({
     reportData: Array,
@@ -130,5 +159,30 @@ const exportReport = () => {
     // Jednostavno preusmjeri preglednik na URL, što će pokrenuti download
     window.location.href = exportUrl;
 };
+
+const selectedUserBreakdown = ref(null);
+
+const openBreakdownModal = async (item) => {
+    if (filterForm.project_id) return;
+
+    try {
+        // Pozovi backend za breakdown
+        const response = await axios.get(route('reporting.userProjectBreakdown'), {
+            params: {
+                user_id: item.user_id,
+                month: filterForm.month,
+            }
+        });
+
+        selectedUserBreakdown.value = {
+            user_name: item.user_name,
+            projects: response.data,  // Pošaljemo podatke o projektima sa servera
+        };
+    } catch (error) {
+        console.error('Greška pri učitavanju breakdown podataka:', error);
+    }
+};
+
+
 
 </script>
