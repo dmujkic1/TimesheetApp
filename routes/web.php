@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimeSheetController;
 use App\Models\Manager;
+use App\Models\OOO;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -74,6 +75,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [OOOController::class, 'store'])->name('ooo.store');
     });
 
+    Route::prefix('manager/ooos')->name('manager.ooos.')->group(function () {
+        Route::get('/pending-approvals', [OOOController::class, 'index'])->name('pending');
+        Route::put('/manager/ooos/approve/{ooo}', [OOOController::class, 'approveOooEntry'])->name('approveEntry');
+        Route::put('/manager/ooos/reject/{ooo}', [OOOController::class, 'rejectOooEntry'])->name('rejectEntry');
+
+    });
+    
     //Fallback/Catchall Route
     Route::fallback(function () {
         return Inertia::render('web/screens/404error');

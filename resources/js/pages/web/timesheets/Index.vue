@@ -46,10 +46,10 @@
         <div v-for="(day, i) in daysInMonth" :key="i" @click="!day.isEmpty && openSidebar(day.date)"
           class="p-2 h-28 text-black rounded shadow transition cursor-pointer flex flex-col justify-start" :class="{
             'bg-white': !day.isToday && !isOOODay(day.date),
-            'bg-blue-100 text-gray-600': isOOODay(day.date),
             'hover:bg-purple-50': !day.isEmpty && !isOOODay(day.date),
             'opacity-0 pointer-events-none': day.isEmpty,
-            'bg-purple-400 border-2': day.isToday
+            'bg-purple-400 border-2': day.isToday,
+            [getOOOColorByStatusAndType(day.date)]: isOOODay(day.date) 
           }">
           <div v-if="!day.isEmpty">
             <!-- Datum -->
@@ -188,14 +188,58 @@ const oooForm = ref({
 const oooDays = computed(() => {
   const allDates = [];
   props?.oooRequests.forEach(req => {
-    allDates.push(...getDateRange(req.start_date, req.end_date));
-  })
+    if (req.status === 'Approved') {
+      allDates.push(...getDateRange(req.start_date, req.end_date));
+    }
+  });
   return allDates;
 });
 
 function isOOODay(date) {
   return oooDays.value.includes(date);
 }
+
+
+function getOOOColorByStatusAndType(date) {
+  const status = getOOOStatusForDate(date);  // Dohvati status za određeni datum
+  const type = getOOOTypeForDate(date);  // Dohvati tip za određeni datum
+
+  if (status === 'Pending' || status === 'Rejected') {
+    return 'bg-white text-black'; // Defaultna boja ako nije odobreno
+  }
+
+  // Ako je status "Approved", boje se postavljaju na temelju tipa
+  switch (type) {
+    case 'Annual_leave':
+      return 'bg-green-100 text-green-800'; // Svijetlozelena
+    case 'Religious_holiday':
+      return 'bg-yellow-100 text-yellow-800'; // Žuta
+    case 'Sick_leave':
+      return 'bg-red-100 text-red-800'; // Crvena
+    case 'Private':
+      return 'bg-indigo-100 text-indigo-800'; // Ljubičasta
+    default:
+      return 'bg-blue-100 text-blue-800'; // Defaultna plava boja
+  }
+}
+
+function getOOOStatusForDate(date) {
+  const match = props.oooRequests.find(req =>
+    getDateRange(req.start_date, req.end_date).includes(date) // Provjera da li datum leži unutar start/end raspona
+  );
+  return match?.status || null; // Ako nije pronađen, vraća null
+}
+
+function getOOOTypeForDate(date) {
+  const match = props.oooRequests.find(req =>
+    getDateRange(req.start_date, req.end_date).includes(date)
+  );
+  return match?.type || null; // Vraća tip ako postoji, ili null ako nema
+}
+
+
+
+
 
 const getExpectedTimeForDate = (dateStr) => {
   if (isOOODay(dateStr)) {

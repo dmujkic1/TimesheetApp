@@ -139,7 +139,7 @@ class TimesheetController extends Controller
         $this->authorize('view-timesheets');
         $currentUser = Auth::user();
         $date = $request->date;
-
+        $oooRequests = $currentUser->ooo()->get();
         $entries = Timesheet::where('user_id', $currentUser->id)
             ->whereDate('date', $date)
             ->with('project')
@@ -162,6 +162,7 @@ class TimesheetController extends Controller
             'entries' => $entries,
             'selectedDate' => $date,
             'projects' => $projects,
+            'oooRequests' => $oooRequests,
         ]);
     }
 

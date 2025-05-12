@@ -20,7 +20,9 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->text('rejection_reason')->nullable()->after('status');
             $table->timestamps();
+
         });
     }
 

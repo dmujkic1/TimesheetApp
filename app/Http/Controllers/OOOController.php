@@ -16,9 +16,60 @@ class OOOController extends Controller
      */
     public function index()
     {
-        
+        $this->authorize('view-pending-approvals');
+
+        $query = OOO::with(['user:id,name,email'])
+            ->where('status', 'Pending');
+
+        $pendingEntries = $query
+                                 //najstariji datum prvo
+                                 ->orderBy('user_id')
+                                 ->paginate(15)
+                                 ->withQueryString();
+
+        return Inertia::render('web/ooos/PendingApprovals', [
+            'pagination' => $query->paginate(15),
+            'pendingEntries' => $pendingEntries,
+        ]);
     }
 
+    public function approveOooEntry(Request $request, OOO $ooo)
+    {
+        $this->authorize('approve-ooos');
+        
+        if ($ooo->status !== 'Pending') {
+            return redirect()->route('manager.ooos.pending')->with('error', 'Unos nije u statusu "Pending".');
+        }
+        
+        $ooo->update([
+            'status' => 'Approved',
+            'rejection_reason' => null, //ako je prethodno bio odbijen, reset sada
+        ]);
+        
+        // Notifikacija korisniku?
+        
+        return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} na dan {$ooo->date} je odobren.");
+    }
+    
+    public function rejectOooEntry(Request $request, OOO $ooo)
+    {
+        $this->authorize('reject-ooos');
+
+        if ($ooo->status !== 'Pending') {
+            return redirect()->route('manager.ooos.pending')->with('error', 'Unos nije u statusu "Pending".');
+        }
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|min:4|max:500',
+        ]);
+        $ooo->update([
+            'status' => 'Rejected',
+            'rejection_reason' => $validated['rejection_reason'],
+        ]);
+
+        // Notifikacija korisniku?
+
+        return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} na dan {$ooo->date} je odbijen.");
+    }
     /**
      * Show the form for creating a new resource.
      */
