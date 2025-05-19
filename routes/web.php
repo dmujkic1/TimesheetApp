@@ -10,6 +10,8 @@ use App\Http\Controllers\TimeSheetController;
 use App\Models\Manager;
 use App\Models\OOO;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\NotificationController;
+
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -22,6 +24,7 @@ Route::get('dashboard', function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('employees')->group(function () {
@@ -74,6 +77,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('ooo')->group(function () {
         Route::post('/store', [OOOController::class, 'store'])->name('ooo.store');
     });
+
+    
 
     Route::prefix('manager/ooos')->name('manager.ooos.')->group(function () {
         Route::get('/pending-approvals', [OOOController::class, 'index'])->name('pending');

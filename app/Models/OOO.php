@@ -13,7 +13,7 @@ class OOO extends Model
      *
      * @var list<string>
      */
-    public $fillable = [
+    protected $fillable = [
         'id',
         'type',
         'start_date',

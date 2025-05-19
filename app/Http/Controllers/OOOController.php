@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\OOO;
 use App\Models\User;
+use App\Notifications\OOOApprovedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -17,7 +19,13 @@ class OOOController extends Controller
     public function index()
     {
         $this->authorize('view-pending-approvals');
-
+        $user = Auth::user();
+        $notifications = Notification::with('user')
+        ->where('type', 'App\Notifications\OOOApprovalRequested') // primjer tipa
+        ->whereNull('read_at') // samo nepročitane
+        ->orderBy('created_at', 'desc')
+        ->paginate(15)
+        ->withQueryString();
         $query = OOO::with(['user:id,name,email'])
             ->where('status', 'Pending');
 
@@ -27,9 +35,12 @@ class OOOController extends Controller
                                  ->paginate(15)
                                  ->withQueryString();
 
+
+
         return Inertia::render('web/ooos/PendingApprovals', [
             'pagination' => $query->paginate(15),
             'pendingEntries' => $pendingEntries,
+            'notifications'=>$notifications
         ]);
     }
 
@@ -40,14 +51,14 @@ class OOOController extends Controller
         if ($ooo->status !== 'Pending') {
             return redirect()->route('manager.ooos.pending')->with('error', 'Unos nije u statusu "Pending".');
         }
-        
+
         $ooo->update([
             'status' => 'Approved',
             'rejection_reason' => null, //ako je prethodno bio odbijen, reset sada
         ]);
         
-        // Notifikacija korisniku?
-        
+        $ooo->user->notify(new OOOApprovedNotification($ooo));
+
         return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} na dan {$ooo->date} je odobren.");
     }
     

@@ -293,17 +293,21 @@ function getDateRange(startDate, endDate) {
 const submitOOORequest = () => {
   router.post(route('ooo.store'), oooForm.value, {
     onSuccess: () => {
-      showModal.value = false
+      showModal.value = false;
       oooForm.value = {
         type: '',
         start_date: '',
         end_date: '',
         notes: '',
         user_id: usePage().props.auth.user.id,
-      }
-    }
-  })
-}
+      };
+
+      // Dodaj notifikaciju o uspješnom slanju zahtjeva
+      
+    },
+  });
+};
+
 
 
 const selectedMonth = ref(dayjs().format('YYYY-MM'))
