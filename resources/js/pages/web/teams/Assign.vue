@@ -12,13 +12,13 @@
       </div>
 
       <!-- Lista Projekata Header -->
-      <div class="w-full max-w-6xl mx-auto px-4 mt-10">
+      <div class="w-full max-w-8xl mx-auto px-4 mt-10">
         <div class="flex items-center justify-between bg-black/60 backdrop-blur-md rounded-xl shadow-lg px-6 py-5">
           <h1 class="text-3xl font-bold text-white">📂 Dodjela zaposlenika timu</h1>
         </div>
       </div>
 
-      <form @submit.prevent="submit" class="w-full max-w-6xl mx-auto px-4 mt-10 bg-black/60 backdrop-blur-md rounded-xl shadow-lg py-5">
+      <form @submit.prevent="submit" class="w-full max-w-8xl mx-auto px-4 mt-10 bg-black/60 backdrop-blur-md rounded-xl shadow-lg py-5">
         
         <!-- Odabir tima -->
         <div class="mb-6">

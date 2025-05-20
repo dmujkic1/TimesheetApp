@@ -12,7 +12,7 @@
     </div>
 
     <!-- Naslov i dugme -->
-    <div class="w-full max-w-6xl mx-auto px-4 mt-10">
+    <div class="w-full max-w-8xl mx-auto px-4 mt-10">
       <div class="flex items-center justify-between bg-black/60 backdrop-blur-md rounded-xl shadow-lg px-6 py-5">
         <h1 class="text-3xl font-bold text-white">📂 Lista uposlenika</h1>
         <Link href="/employees/add" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow">
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="w-full max-w-6xl mx-auto px-4 mt-10">
+    <div class="w-full max-w-8xl mx-auto px-4 mt-10">
       <div class="flex items-center justify-between bg-black/60 backdrop-blur-md rounded-xl shadow-lg px-6 py-4">
         <input  
           v-model="search"
@@ -41,7 +41,7 @@
 
 
     <!-- Tabela -->
-    <div class="w-full max-w-6xl mx-auto px-4 mt-6">
+    <div class="w-full max-w-8xl mx-auto px-4 mt-6">
       <div class="bg-black/50 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden">
         <table class="w-full text-white text-left text-sm">
           <thead class="bg-purple-900/80 text-white uppercase text-xs tracking-wider">
@@ -81,13 +81,13 @@
 
   </div>
     <!-- Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-xl shadow-xl text-center w-full max-w-sm">
-        <h2 class="text-xl font-bold text-purple-700 mb-2">Potvrda brisanja</h2>
-        <p class="text-gray-700 mb-4">Jeste li sigurni da želite obrisati ovog uposlenika?</p>
-        <div class="flex justify-center gap-4">
-          <button @click="deleteEmployee" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Obriši</button>
-          <button @click="showModal = false" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Otkaži</button>
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 backdrop-blur-lg">
+      <div class="bg-purple-800 p-8 rounded-2xl shadow-2xl text-center w-full max-w-md transform transition-all duration-300 hover:scale-105">
+        <h2 class="text-xl font-bold text-white mb-4">Potvrda brisanja</h2>
+        <p class="text-gray-300 mb-6">Jeste li sigurni da želite obrisati ovaj projekat?</p>
+        <div class="flex justify-center gap-6">
+          <button @click="deleteEmployee" class="bg-red-600 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-red-700 hover:scale-105 transition-all">Obriši</button>
+          <button @click="showModal = false" class="bg-gray-700 px-8 py-3 rounded-lg shadow-md hover:bg-gray-800 hover:scale-105 transition-all">Otkaži</button>
         </div>
       </div>
     </div>

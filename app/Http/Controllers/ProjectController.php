@@ -18,7 +18,7 @@ class ProjectController extends Controller
     {
         $this->authorize('view-projects');
 
-        $projects = Project::with('client')->get();
+        $projects = Project::with('client')->paginate(10);
         return Inertia::render('web/projects/Index', [ 
             'projects' => $projects,
             'flashMessage'=>session('success')
