@@ -1,9 +1,18 @@
 <template>
   <div class="min-h-screen bg-gray-100" style="background-image: url('/pozadina.jpg');">
   <Navbar />
-      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-        Unosi na čekanju za odobrenje
-      </h2>
+      <div class="text-center py-8">
+  <h2 class="text-3xl font-bold tracking-tight text-gray-800 dark:text-gray-200 flex items-center justify-center space-x-3 mx-auto max-w-xl">
+    <span class="text-indigo-600 dark:text-indigo-400 text-4xl">⏳</span>
+    <span>Unosi na čekanju za odobrenje</span>
+  </h2>
+  <p class="mt-2 text-gray-600 dark:text-gray-400 text-sm max-w-md mx-auto">
+    Prikaz unosa koji čekaju odobrenje s mogućnošću upravljanja.
+  </p>
+</div>
+
+
+
 
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
