@@ -61,6 +61,13 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $employeeRole = Role::create(['name' => 'employee']);
         $employeeRole->givePermissionTo(['view-employees']);
+        $employeeRole->givePermissionTo(['create-timesheet']);
+        $employeeRole->givePermissionTo(['view-timesheets']);
+        $employeeRole->givePermissionTo(['edit-timesheet']);
+        $employeeRole->givePermissionTo(['update-timesheet']);
+        $employeeRole->givePermissionTo(['delete-timesheet']);
+        $employeeRole->givePermissionTo(['submit-timesheets']);
+        $employeeRole->givePermissionTo(['create-ooo-request']);
 
         $managerRole = Role::create(['name' => 'manager']);
         $managerRole->givePermissionTo(['view-employees', 'view-managers']);
