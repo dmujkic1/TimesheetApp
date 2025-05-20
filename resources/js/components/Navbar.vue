@@ -106,6 +106,8 @@ const getCurrentRoute = () => {
     return 'Timesheets';
   } else if (pathname.includes('manager/timesheets/pending-approvals')) {
     return 'Timesheets na provjeri';
+  } else if (pathname.includes('reporting/hours-per-user')) {
+    return 'Izvještaj sati';
   } else {
     return '';
   }
@@ -118,6 +120,7 @@ const navigation = [
   { name: 'Dodjela timu', href: '/teams/assign', current: getCurrentRoute() === 'Dodjela timu' },
   { name: 'Timesheets', href: '/timesheets', current: getCurrentRoute() === 'Timesheets' },
   { name: 'Timesheets na provjeri', href: '/manager/timesheets/pending-approvals', current: getCurrentRoute() === 'Timesheets na provjeri' },
+  { name: 'Izvještaj sati', href: '/reporting/hours-per-user', current: getCurrentRoute() === 'Izvještaj sati' },
 ];
 
 const notifications = [
