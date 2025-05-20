@@ -70,7 +70,7 @@
                   <a href="http://127.0.0.1:8000/settings/profile" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Settings</a>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
-                  <a href="#" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Sign out</a>
+                  <a href="#" @click.prevent="logout" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Sign out</a>
                 </MenuItem>
               </MenuItems>
             </transition>
@@ -91,6 +91,11 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { ref, onMounted, computed } from 'vue';
+import { router } from '@inertiajs/vue3'
+
+function logout() {
+  router.post('/logout')
+}
 
 const getCurrentRoute = () => {
   const pathname = window.location.pathname;
