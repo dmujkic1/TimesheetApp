@@ -5,6 +5,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ManagerTimesheetController;
 use App\Http\Controllers\OOOController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimeSheetController;
 use App\Models\Manager;
@@ -78,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [OOOController::class, 'store'])->name('ooo.store');
     });
 
+
     
 
     Route::prefix('manager/ooos')->name('manager.ooos.')->group(function () {
@@ -87,6 +89,14 @@ Route::middleware(['auth'])->group(function () {
 
     });
     
+
+    Route::prefix('reporting')->group(function () {
+        Route::get('/hours-per-user', [ReportController::class, 'hoursPerUser'])->name('reporting.hoursPerUser');
+        Route::get('/hours-per-user/export', [ReportController::class, 'exportHoursPerUser'])->name('reporting.hoursPerUser.export');
+        Route::get('/hours-per-project', [ReportController::class, 'getUserProjectBreakdown'])->name('reporting.userProjectBreakdown');
+    });
+
+
     //Fallback/Catchall Route
     Route::fallback(function () {
         return Inertia::render('web/screens/404error');
