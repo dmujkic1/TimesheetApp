@@ -59,7 +59,7 @@ class OOOController extends Controller
         
         $ooo->user->notify(new OOOApprovedNotification($ooo));
 
-        return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} na dan {$ooo->date} je odobren.");
+        return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} je odobren.");
     }
     
     public function rejectOooEntry(Request $request, OOO $ooo)
@@ -79,7 +79,7 @@ class OOOController extends Controller
 
         // Notifikacija korisniku?
 
-        return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} na dan {$ooo->date} je odbijen.");
+        return redirect()->route('manager.ooos.pending')->with('success', "Unos za korisnika {$ooo->user->name} je odbijen.");
     }
     /**
      * Show the form for creating a new resource.
