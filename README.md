@@ -70,7 +70,9 @@ TimesheetApp/
 ## 📊 Baza podataka
 
 Dizajn baze podataka možete pogledati ovdje:  
-🔗 **[Link do baze podataka (ER diagram)](https://drawsql.app/teams/dmujkic1/diagrams/copy-of-timesheetapp)**  
+![image](https://github.com/user-attachments/assets/a6b038da-cec2-4b72-bd72-411fa80ce265)
+
+
 
 ---
 
