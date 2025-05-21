@@ -42,13 +42,21 @@ TimesheetApp/
 ├── resources/
 │   └── js/
 │       └── Pages/
-│           └── Timesheets/
-│               ├── Index.vue
-│               ├── SidebarTimesheet.vue
-│               └── ...
+│           └── web/
+│                └── employees
+│                         └── Index.vue
+│                         └── Create.vue
+│                         └── Edit.vue
+│                         └── Show.vue
+│                └── managers
+│                      ...
+│
+│
+│
 ├── routes/
 │   └── web.php
 ├── database/
+│   └── factories/
 │   └── migrations/
 │   └── seeders/
 └── ...
